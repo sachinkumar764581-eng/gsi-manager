@@ -29,19 +29,14 @@ jobs:
       - name: Install Cordova
         run: npm install -g cordova
 
-      - name: Create Cordova Project & Add Icon
+      - name: Build Project
         run: |
           cordova create gsi_app com.gsi.manager "GSI Manager"
           cd gsi_app
           rm -rf www/*
           cp ../index.html www/index.html
-          
-          # Add custom icon
-          if [ -f "../icon.png" ]; then
-            cp ../icon.png www/icon.png
-            sed -i '/<\/widget>/i <icon src="www/icon.png" />' config.xml
-          fi
-
+          cp ../icon.png www/icon.png
+          cp ../config.xml config.xml
           cordova platform add android
           cordova build android
 
