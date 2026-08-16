@@ -3,7 +3,10 @@
     <name>GSI Manager</name>
     <description>GSI Manager App</description>
     <access origin="*" />
+    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/icon.png" />
+    <preference name="AndroidWindowSplashScreenBackground" value="#FFFFFF" />
     <platform name="android">
         <icon src="www/icon.png" />
+        <splash src="www/icon.png" />
     </platform>
 </widget>
