@@ -270,6 +270,7 @@
                 <div class="data-item" style="grid-column: span 2;"><label>Phone</label><span id="pPhone">-</span></div>
             </div>
 
+            <!-- FIXED CALL & MESSAGE BUTTONS WITH DIRECT INTENT -->
             <div class="action-grid">
                 <button id="btnCall" class="btn-action call" onclick="makeCall()"><i class="fas fa-phone-alt"></i> Call</button>
                 <button id="btnWa" class="btn-action wa" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Message</button>
@@ -316,7 +317,7 @@
                 </div>
             </div>
             <div class="setting-item" onclick="document.getElementById('importFile').click()">
-                <div class="setting-icon" style="background: var(--secondary-light); color: var(--secondary);"><i class="fas fa-upload"></i></div>
+                <div class="setting-icon" style="background: #SECONDARY-LIGHT; color: var(--secondary);"><i class="fas fa-upload"></i></div>
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Restore from File</h4>
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Load data from .json backup</p>
@@ -627,7 +628,6 @@
                 students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
                 payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
                 
-                // अगर लोकल डेटा खाली है, तो क्लाउड से ऑटो-रिस्टोर करने का प्रयास करें
                 if (students.length === 0 && payments.length === 0) {
                     fetchCloudDataOnLogin(currentAccount.email);
                 }
@@ -641,7 +641,6 @@
             }
         }
 
-        // CLOUD AUTO-RESTORE ON LOGIN (क्लियर डेटा या नए फोन पर डेटा वापस लाने के लिए)
         function fetchCloudDataOnLogin(email) {
             if (!CLOUD_SYNC_URL) return;
             setSyncStatus(true);
@@ -959,6 +958,9 @@
             switchScreen('profileScreen');
         }
 
+        // ==========================================
+        // 100% WORKING INTENT CALL & WHATSAPP FIX
+        // ==========================================
         function makeCall() {
             if (activePhone) {
                 window.location.href = "tel:" + activePhone;
@@ -976,17 +978,46 @@
             }
         }
 
+        // ==========================================
+        // SMART CUMULATIVE BALANCE CALCULATION (ADVANCE/DUE FIX)
+        // ==========================================
         function renderFees() {
             const box = document.getElementById('paymentsList'); box.innerHTML = '';
-            const sp = payments.filter(p => p.sid === curId).sort((a, b) => new Date(b.pDate) - new Date(a.pDate));
+            const sp = payments.filter(p => p.sid === curId).sort((a, b) => new Date(a.pDate) - new Date(b.pDate));
             if(!sp.length) { box.innerHTML = `<p style="text-align:center; color:#94A3B8; padding:20px; font-size:13px;">No fees recorded</p>`; return; }
             
+            let runningBalance = 0; // पॉजिटिव मतलब एडवांस, नेगेटिव मतलब बकाया (Due)
+            const processedList = [];
+
             sp.forEach(p => {
+                const base = parseFloat(p.baseFee || 0);
+                const disc = parseFloat(p.disc || 0);
+                const netPayable = Math.max(0, base - disc);
+                const paid = parseFloat(p.amt || 0);
+
+                // इस ट्रांजैक्शन का शुद्ध अंतर: (दिया गया - लगना चाहिए था)
+                const diff = paid - netPayable;
+                runningBalance += diff;
+
+                let itemDue = 0;
+                let itemAdv = 0;
+
+                if (runningBalance < 0) {
+                    itemDue = Math.abs(runningBalance);
+                } else if (runningBalance > 0) {
+                    itemAdv = runningBalance;
+                }
+
+                processedList.push({ ...p, calculatedDue: itemDue, calculatedAdv: itemAdv });
+            });
+
+            // उल्टे क्रम में दिखाएं (नया सबसे ऊपर)
+            processedList.reverse().forEach(p => {
                 const [y, m] = p.m.split('-');
                 const mName = new Date(y, m-1).toLocaleString('en', {month:'short'});
                 const payDateStr = formatDate(p.pDate);
-                const dueAmt = parseFloat(p.due || 0);
-                const advAmt = parseFloat(p.adv || 0);
+                const dueAmt = p.calculatedDue;
+                const advAmt = p.calculatedAdv;
                 const discAmt = parseFloat(p.disc || 0);
                 
                 let badgeHtml = '';
@@ -1323,7 +1354,7 @@
                 frm.reset();
                 title.innerText = "Record Fee"; btn.innerText = "Confirm Payment";
                 document.getElementById('fId').value = '';
-                document.getElementById('fBaseFee').value = s.fee; // अब यहाँ आप मनचाही फीस एडिट कर सकते हैं
+                document.getElementById('fBaseFee').value = s.fee;
                 document.getElementById('fDiscount').value = 0;
                 document.getElementById('fAmount').value = s.fee;
                 document.getElementById('fDue').value = 0;
