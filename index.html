@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#1E3A8A">
     <meta name="apple-mobile-web-app-capable" content="yes">
     
-    <title>Coaching Institute Manager</title>
+    <title>Fee Manager Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -157,7 +157,7 @@
         <div class="auth-card">
             <div class="auth-header">
                 <div class="app-icon"><i class="fas fa-graduation-cap"></i></div>
-                <h2 id="authTitle">Create Institute Account</h2>
+                <h2 id="authTitle">Fee Manager Pro</h2>
                 <p id="authSubtitle">Set up your coaching in 1 minute</p>
             </div>
 
@@ -213,7 +213,7 @@
                 <div class="brand">
                     <div class="logo-icon" id="mainHeaderLogo"><i class="fas fa-graduation-cap"></i></div>
                     <div>
-                        <h2 id="dashInstName">Institute Name</h2>
+                        <h2 id="dashInstName">Fee Manager Pro</h2>
                         <p id="dashInstTag">Fee Management</p>
                         <div class="sync-pill synced" id="syncStatus"><i class="fas fa-cloud"></i> Ready</div>
                     </div>
@@ -332,7 +332,7 @@
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Read our data safety policy</p>
                 </div>
             </div>
-            <div class="setting-item" onclick="window.location.href='mailto:support@globalstudyinstitute.com'">
+            <div class="setting-item" onclick="openHelpSupport()">
                 <div class="setting-icon" style="background: #E0F2FE; color: #0284C7;"><i class="fas fa-envelope"></i></div>
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Help & Support</h4>
@@ -369,7 +369,7 @@
         </div>
         <div class="policy-content">
             <h3>1. Introduction</h3>
-            <p>Welcome to Coaching Institute Manager. We are committed to protecting your personal data and your right to privacy.</p>
+            <p>Welcome to Fee Manager Pro. We are committed to protecting your personal data and your right to privacy.</p>
             
             <h3>2. Data We Collect</h3>
             <ul>
@@ -535,7 +535,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT FIXED FOR APK INTENTS & BACK BUTTON -->
+    <!-- JAVASCRIPT -->
     <script>
         const CLOUD_SYNC_URL = "https://script.google.com/macros/s/AKfycbwsxyIAV_bsbx2K2UKR9Dg3KPrFqIGcpF83xt02zII_AZeyXU77mOXpV8AO5_8pf1vvGA/exec";
 
@@ -633,7 +633,7 @@
 
         function applyInstituteDetails() {
             if (!currentAccount) return;
-            document.getElementById('dashInstName').innerText = currentAccount.instName || "Global Study Institute";
+            document.getElementById('dashInstName').innerText = currentAccount.instName || "Fee Manager Pro";
             document.getElementById('dashInstTag').innerText = currentAccount.tagline || "Fee Management";
             
             const logoContainer = document.getElementById('mainHeaderLogo');
@@ -646,7 +646,7 @@
                 document.getElementById('tabLogin').classList.remove('active');
                 document.getElementById('registerForm').style.display = 'block';
                 document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('authTitle').innerText = "Create Institute Account";
+                document.getElementById('authTitle').innerText = "Fee Manager Pro";
                 document.getElementById('authSubtitle').innerText = "Set up your coaching in 1 minute";
             } else {
                 document.getElementById('tabLogin').classList.add('active');
@@ -725,7 +725,7 @@
                 currentAccount = found;
             } else {
                 currentAccount = { 
-                    instName: "Institute Settings", 
+                    instName: "Fee Manager Pro", 
                     email: email, 
                     phone: "Update via Settings", 
                     tagline: "Fee Management", 
@@ -805,42 +805,42 @@
             }
         }
 
-        // ==========================================
-        // 1. BACK BUTTON FIX (ऐप एग्जिट नहीं होगा, पहले होम पर आएगा)
-        // ==========================================
+        function openHelpSupport() {
+            alert("Fee Manager Pro Support\n\nFor any issues or questions, please contact developer at:\nsupport@feemanagerpro.com\n\nWe are here to help you!");
+        }
+
+        // ===================================================
+        // 1-CLICK BACK BUTTON EXIT FIX (एक बार में काम करेगा)
+        // ===================================================
         function handleBackNavigation() {
             let activeModal = document.querySelector('.modal-overlay.active');
             if (activeModal) { 
                 activeModal.classList.remove('active'); 
-                return true; 
+                return; 
             }
             if (document.getElementById('privacyScreen').classList.contains('active')) {
                 switchScreen('settingsScreen'); 
-                return true;
+                return;
             }
             if (document.getElementById('profileScreen').classList.contains('active') || 
                 document.getElementById('settingsScreen').classList.contains('active')) {
                 switchScreen('homeScreen'); 
-                return true;
+                return;
             }
+            // होम स्क्रीन पर आने के बाद सिर्फ एक बार कन्फर्मेशन और एक बार में एग्जिट
             if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं?")) {
                 if (navigator.app && navigator.app.exitApp) { 
                     navigator.app.exitApp(); 
                 } else { 
-                    window.history.back(); 
+                    window.close();
                 }
-            } else {
-                window.history.pushState({ screen: 'home' }, '');
             }
-            return false;
         }
 
-        window.addEventListener('popstate', function(e) { handleBackNavigation(); });
         document.addEventListener("backbutton", function(e) { 
             e.preventDefault(); 
             handleBackNavigation(); 
         }, false);
-        window.history.pushState({ screen: 'home' }, '');
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -848,8 +848,6 @@
             if (screenId === 'homeScreen') { 
                 curId = null; 
                 renderList(); 
-            } else { 
-                window.history.pushState({ screen: screenId }, ''); 
             }
         }
 
@@ -926,9 +924,6 @@
             switchScreen('profileScreen');
         }
 
-        // ==========================================
-        // 2. CALL & WHATSAPP FIX FOR APK (WebView Supported)
-        // ==========================================
         function makeCall() {
             if (activePhone) {
                 window.location.href = "tel:" + activePhone;
@@ -940,7 +935,6 @@
         function sendWhatsApp() {
             if (activePhone) {
                 const cleanPhone = activePhone.replace(/\D/g, '').slice(-10);
-                // WebView और APK दोनों में व्हाट्सएप चैट खोलने का सबसे सुरक्षित तरीका
                 window.location.href = "https://wa.me/91" + cleanPhone;
             } else {
                 alert("Phone number not available!");
@@ -1033,7 +1027,7 @@
                 try { doc.addImage(currentAccount.logo, 'JPEG', 43, curY, 14, 14); curY += 17; } catch(e) { curY += 2; }
             } else { curY += 2; }
 
-            const instTitle = (currentAccount && currentAccount.instName) ? currentAccount.instName.toUpperCase() : "COACHING INSTITUTE";
+            const instTitle = (currentAccount && currentAccount.instName) ? currentAccount.instName.toUpperCase() : "FEE MANAGER PRO";
             const instPhone = (currentAccount && currentAccount.phone) ? currentAccount.phone : "Contact Institute";
             const instTag = (currentAccount && currentAccount.tagline) ? currentAccount.tagline : "Official Fee Receipt";
 
@@ -1242,7 +1236,6 @@
 
         function openStudentModal(mode) {
             document.getElementById('studentModal').classList.add('active');
-            window.history.pushState({ modal: 'studentModal' }, '');
             const frm = document.getElementById('studentForm');
             const title = document.getElementById('studentModalTitle');
             const btn = document.getElementById('studentSubmitBtn');
@@ -1274,7 +1267,6 @@
 
         function openFeeModal(feeId = null) {
             document.getElementById('paymentModal').classList.add('active');
-            window.history.pushState({ modal: 'paymentModal' }, '');
             const frm = document.getElementById('feeForm');
             const title = document.getElementById('feeModalTitle');
             const btn = document.getElementById('feeSubmitBtn');
