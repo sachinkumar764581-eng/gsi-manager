@@ -174,7 +174,7 @@
 
                 <div class="form-group">
                     <label>Institute / Coaching Name *</label>
-                    <input type="text" id="regInstName" class="form-control" placeholder="e.g. Global Study Institute" required>
+                    <input type="text" id="regInstName" class="form-control" placeholder="e.g. Fee Manager Pro" required>
                 </div>
                 <div class="form-group">
                     <label>Director / Owner Name *</label>
@@ -298,7 +298,7 @@
                 <div class="setting-icon" style="background: #E0E7FF; color: #4F46E5;"><i class="fas fa-university"></i></div>
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Institute Profile</h4>
-                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Change name, tagline & logo</p>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;" id="profileSubText">Change name, tagline & owner email</p>
                 </div>
             </div>
             <div class="setting-item" onclick="triggerManualSync()">
@@ -413,8 +413,12 @@
                     <input type="text" id="editInstName" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label>Owner / Director</label>
+                    <label>Owner / Director Name</label>
                     <input type="text" id="editOwnerName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Registered Gmail (Account ID)</label>
+                    <input type="email" id="editEmail" class="form-control" readonly style="background:#F1F5F9; color:#475569;">
                 </div>
                 <div class="form-group">
                     <label>Contact Phone (For Receipts)</label>
@@ -498,8 +502,8 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Total Fee (₹)</label>
-                        <input type="number" id="fBaseFee" class="form-control" readonly>
+                        <label>Monthly Fee (₹)</label>
+                        <input type="number" id="fBaseFee" class="form-control" required oninput="recalcPayment()">
                     </div>
                     <div class="form-group">
                         <label>Discount (₹)</label>
@@ -622,6 +626,12 @@
             if (currentAccount) {
                 students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
                 payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
+                
+                // अगर लोकल डेटा खाली है, तो क्लाउड से ऑटो-रिस्टोर करने का प्रयास करें
+                if (students.length === 0 && payments.length === 0) {
+                    fetchCloudDataOnLogin(currentAccount.email);
+                }
+
                 document.getElementById('authScreen').style.display = 'none';
                 applyInstituteDetails();
                 switchScreen('homeScreen');
@@ -631,10 +641,38 @@
             }
         }
 
+        // CLOUD AUTO-RESTORE ON LOGIN (क्लियर डेटा या नए फोन पर डेटा वापस लाने के लिए)
+        function fetchCloudDataOnLogin(email) {
+            if (!CLOUD_SYNC_URL) return;
+            setSyncStatus(true);
+            fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.status === 'success' && data.payload) {
+                        if (data.payload.students) {
+                            students = data.payload.students;
+                            safeSetItem(`gsi_students_${email}`, students);
+                        }
+                        if (data.payload.payments) {
+                            payments = data.payload.payments;
+                            safeSetItem(`gsi_payments_${email}`, payments);
+                        }
+                        if (data.payload.account) {
+                            currentAccount = data.payload.account;
+                            safeSetItem('gsi_current_user', currentAccount);
+                        }
+                        renderList();
+                    }
+                    setSyncStatus(false);
+                })
+                .catch(() => { setSyncStatus(false); });
+        }
+
         function applyInstituteDetails() {
             if (!currentAccount) return;
             document.getElementById('dashInstName').innerText = currentAccount.instName || "Fee Manager Pro";
             document.getElementById('dashInstTag').innerText = currentAccount.tagline || "Fee Management";
+            document.getElementById('profileSubText').innerText = `Logged in: ${currentAccount.email}`;
             
             const logoContainer = document.getElementById('mainHeaderLogo');
             logoContainer.innerHTML = currentAccount.logo ? `<img src="${currentAccount.logo}">` : `<i class="fas fa-graduation-cap"></i>`;
@@ -771,6 +809,7 @@
             if (!currentAccount) return;
             document.getElementById('editInstName').value = currentAccount.instName;
             document.getElementById('editOwnerName').value = currentAccount.ownerName || '';
+            document.getElementById('editEmail').value = currentAccount.email || '';
             document.getElementById('editPhone').value = currentAccount.phone || '';
             document.getElementById('editTagline').value = currentAccount.tagline || '';
             tempEditLogo = currentAccount.logo || '';
@@ -809,9 +848,6 @@
             alert("Fee Manager Pro Support\n\nFor any issues or questions, please contact developer at:\nsupport@feemanagerpro.com\n\nWe are here to help you!");
         }
 
-        // ===================================================
-        // 1-CLICK BACK BUTTON EXIT FIX (एक बार में काम करेगा)
-        // ===================================================
         function handleBackNavigation() {
             let activeModal = document.querySelector('.modal-overlay.active');
             if (activeModal) { 
@@ -827,7 +863,6 @@
                 switchScreen('homeScreen'); 
                 return;
             }
-            // होम स्क्रीन पर आने के बाद सिर्फ एक बार कन्फर्मेशन और एक बार में एग्जिट
             if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं?")) {
                 if (navigator.app && navigator.app.exitApp) { 
                     navigator.app.exitApp(); 
@@ -1288,7 +1323,7 @@
                 frm.reset();
                 title.innerText = "Record Fee"; btn.innerText = "Confirm Payment";
                 document.getElementById('fId').value = '';
-                document.getElementById('fBaseFee').value = s.fee;
+                document.getElementById('fBaseFee').value = s.fee; // अब यहाँ आप मनचाही फीस एडिट कर सकते हैं
                 document.getElementById('fDiscount').value = 0;
                 document.getElementById('fAmount').value = s.fee;
                 document.getElementById('fDue').value = 0;
