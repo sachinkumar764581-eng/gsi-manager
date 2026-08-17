@@ -2,143 +2,223 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Global Study Institute</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1E3A8A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <title>Coaching Institute Manager</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
         :root {
-            --primary: #2563EB; --primary-dark: #1E3A8A; --primary-light: #DBEAFE;
-            --secondary: #059669; --secondary-light: #D1FAE5;
-            --bg: #F8FAFC; --surface: #FFFFFF;
-            --text-main: #0F172A; --text-muted: #64748B;
+            --primary: #1E3A8A;
+            --primary-light: #EFF6FF;
+            --secondary: #059669;
+            --secondary-light: #ECFDF5;
+            --danger: #DC2626;
+            --danger-light: #FEF2F2;
+            --info: #0284C7;
+            --info-light: #F0F9FF;
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; letter-spacing: 0.25px; overscroll-behavior-y: none; }
+
+        .sync-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.2); color: #E2E8F0; margin-top: 4px; }
+        .sync-pill.synced { color: #86EFAC; }
+        .sync-pill.syncing { color: #FDE047; }
+
+        .auth-container { min-height: 100vh; background: linear-gradient(145deg, #0F172A, #1E3A8A); padding: 30px 20px 50px 20px; display: flex; flex-direction: column; justify-content: center; }
+        .auth-card { background: var(--surface); border-radius: 26px; padding: 26px 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
+        .auth-header { text-align: center; margin-bottom: 22px; }
+        .auth-header .app-icon { width: 60px; height: 60px; background: var(--primary-light); color: #2563EB; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px auto; }
+        .auth-header h2 { font-size: 21px; font-weight: 800; color: var(--text-main); letter-spacing: 0.3px; }
+        .auth-header p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+        .auth-toggle { display: flex; background: #F1F5F9; border-radius: 14px; padding: 4px; margin-bottom: 20px; }
+        .auth-toggle button { flex: 1; padding: 12px; border: none; background: transparent; font-weight: 700; font-size: 13px; color: var(--text-muted); border-radius: 11px; cursor: pointer; transition: 0.2s; min-height: 48px; }
+        .auth-toggle button.active { background: var(--surface); color: #2563EB; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         
-        .dashboard-header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); padding: 25px 20px 45px 20px; border-radius: 0 0 35px 35px; color: white; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2); }
-        .app-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .app-bar .brand { display: flex; align-items: center; gap: 12px; }
-        .app-bar .logo-icon { background: white; color: var(--primary); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        .dashboard-header { background: linear-gradient(135deg, #1E3A8A, #2563EB); padding: 24px 20px 44px 20px; border-radius: 0 0 28px 28px; color: white; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.18); }
+        .app-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .app-bar .brand { display: flex; align-items: center; gap: 12px; max-width: 80%; }
+        .app-bar .logo-icon { background: white; color: #2563EB; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; flex-shrink: 0; }
         .app-bar .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .app-bar h2 { font-size: 19px; font-weight: 800; line-height: 1.2; }
-        .app-bar p { font-size: 11px; opacity: 0.8; letter-spacing: 1px; text-transform: uppercase; }
-        .settings-icon { font-size: 22px; cursor: pointer; padding: 5px; }
+        .app-bar h2 { font-size: 16px; font-weight: 800; line-height: 1.3; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .app-bar p { font-size: 11px; opacity: 0.88; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .settings-icon { font-size: 22px; cursor: pointer; padding: 10px; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .stat-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); }
-        .stat-card.full-width { grid-column: span 2; background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05)); }
-        .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; opacity: 0.9; }
-        .stat-header p { font-size: 12px; font-weight: 600; text-transform: uppercase; }
-        .stat-card h3 { font-size: 24px; font-weight: 800; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-card { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); padding: 14px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18); }
+        .stat-card.full-width { grid-column: span 2; background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.06)); }
+        .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; opacity: 0.92; }
+        .stat-header p { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+        .stat-card h3 { font-size: 22px; font-weight: 800; letter-spacing: 0.4px; }
 
-        .screen { display: none; padding-bottom: 120px; }
-        .screen.active { display: block; animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .screen { display: none; padding-bottom: 110px; }
+        .screen.active { display: block; animation: fadeIn 0.22s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .main-container { padding: 0 20px; margin-top: -20px; position: relative; z-index: 2; }
-        .search-box { width: 100%; padding: 15px 15px 15px 45px; border: none; border-radius: 16px; font-size: 14px; background: var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" fill="%2394A3B8"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>') no-repeat 18px center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); outline: none; margin-bottom: 20px; }
+        .main-container { padding: 0 18px; margin-top: -18px; position: relative; z-index: 2; }
+        .search-box { width: 100%; min-height: 48px; padding: 14px 16px 14px 44px; border: 1px solid #E2E8F0; border-radius: 16px; font-size: 14px; background: var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="15" fill="%2394A3B8"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>') no-repeat 16px center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); outline: none; margin-bottom: 16px; font-weight: 500; }
         
-        .student-card { background: var(--surface); padding: 15px; border-radius: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); cursor: pointer; border: 1px solid #E2E8F0; }
-        .avatar { width: 50px; height: 50px; border-radius: 14px; object-fit: cover; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
+        .student-card { background: var(--surface); padding: 15px 16px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); cursor: pointer; border: 1px solid #E2E8F0; min-height: 72px; }
+        .avatar { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; background: var(--primary-light); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
         .card-content { flex: 1; }
         .card-header-row { display: flex; justify-content: space-between; align-items: center; }
-        .card-content h4 { font-size: 16px; font-weight: 700; color: var(--text-main); }
-        .card-content p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-        .batch-badge { background: var(--bg); color: var(--text-muted); padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-top: 5px; display: inline-block; border: 1px solid #CBD5E1; }
+        .card-content h4 { font-size: 15px; font-weight: 700; color: var(--text-main); letter-spacing: 0.3px; }
+        .card-content p { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
+        .batch-badge { background: #F1F5F9; color: var(--text-muted); padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-top: 5px; display: inline-block; letter-spacing: 0.4px; }
+        .sid-badge { background: #DBEAFE; color: #1D4ED8; padding: 2px 7px; border-radius: 6px; font-size: 10.5px; font-weight: 800; margin-left: 6px; letter-spacing: 0.4px; }
 
-        .profile-hero { background: var(--surface); margin: -30px 20px 20px 20px; padding: 25px 20px; border-radius: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); position: relative; text-align: center; z-index: 2; }
-        .profile-hero .avatar-large { width: 85px; height: 85px; border-radius: 20px; margin: -60px auto 10px auto; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover; }
-        .profile-hero h2 { font-size: 22px; font-weight: 800; color: var(--text-main); }
-        .profile-hero p.fname { font-size: 13px; color: var(--text-muted); margin-bottom: 15px; }
+        .profile-hero { background: var(--surface); margin: -28px 18px 20px 18px; padding: 22px 18px; border-radius: 22px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); position: relative; text-align: center; z-index: 2; border: 1px solid #E2E8F0; }
+        .profile-hero .avatar-large { width: 82px; height: 82px; border-radius: 20px; margin: -56px auto 12px auto; background: var(--primary-light); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; border: 4px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.08); object-fit: cover; }
+        .profile-hero h2 { font-size: 20px; font-weight: 800; color: var(--text-main); letter-spacing: 0.3px; }
+        .profile-hero p.fname { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; font-weight: 500; }
         
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--bg); padding: 12px; border-radius: 16px; text-align: left; }
-        .data-item { padding: 10px; background: var(--surface); border-radius: 12px; }
-        .data-item label { font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 2px; }
-        .data-item span { font-size: 14px; font-weight: 700; color: var(--text-main); }
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #F8FAFC; padding: 12px; border-radius: 16px; text-align: left; }
+        .data-item { padding: 8px 12px; background: var(--surface); border-radius: 10px; border: 1px solid #EEF2F6; }
+        .data-item label { font-size: 10px; color: #94A3B8; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 3px; letter-spacing: 0.5px; }
+        .data-item span { font-size: 13.5px; font-weight: 700; color: var(--text-main); letter-spacing: 0.3px; }
         
-        .action-grid { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-action { flex: 1; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; cursor:pointer;}
-        .btn-action.call { background: var(--primary-light); color: var(--primary); }
-        .btn-action.wa { background: var(--secondary-light); color: var(--secondary); }
+        .action-grid { display: flex; gap: 12px; margin-top: 16px; }
+        .btn-action { flex: 1; min-height: 48px; padding: 12px; border-radius: 12px; font-size: 13.5px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; cursor:pointer; border: none; letter-spacing: 0.4px; }
+        .btn-action.call { background: var(--primary-light); color: #1E40AF; }
+        .btn-action.wa { background: var(--secondary-light); color: #047857; }
 
-        .settings-list { padding: 20px; }
-        .setting-item { background: white; padding: 18px; border-radius: 16px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border: 1px solid #E2E8F0; }
-        .setting-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
-
-        .section-heading { font-size: 17px; font-weight: 800; padding: 0 20px; margin: 25px 0 15px 0; }
+        .settings-list { padding: 18px; }
+        .setting-item { background: white; padding: 16px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.02); border: 1px solid #E2E8F0; min-height: 72px; }
+        .setting-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0; }
+        .section-heading { font-size: 14px; color: var(--text-muted); font-weight: 800; padding: 0 18px; margin: 24px 0 10px 0; text-transform: uppercase; letter-spacing: 0.8px; }
         
-        /* NEW BEAUTIFUL PAYMENT HISTORY DESIGN */
-        .payment-list { padding: 0 20px; }
-        .payment-card { background: var(--surface); padding: 16px; border-radius: 18px; margin-bottom: 15px; border: 1px solid #E2E8F0; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 12px; }
+        .payment-list { padding: 0 18px; }
+        .payment-card { background: var(--surface); padding: 16px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #E2E8F0; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 12px; }
         .pay-header { display: flex; justify-content: space-between; align-items: flex-start; }
         .pay-info { display: flex; gap: 12px; align-items: center; }
-        .pay-icon { width: 40px; height: 40px; background: var(--secondary-light); color: var(--secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-        .pay-text h5 { font-size: 15px; color: var(--text-main); font-weight: 700; margin-bottom: 2px; }
-        .pay-text p { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-        .pay-amt { font-weight: 800; color: var(--secondary); font-size: 18px; text-align: right; }
+        .pay-icon { width: 40px; height: 40px; background: var(--secondary-light); color: var(--secondary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .pay-icon.partial { background: var(--danger-light); color: var(--danger); }
+        .pay-icon.advance { background: var(--info-light); color: var(--info); }
+        .pay-text h5 { font-size: 14.5px; color: var(--text-main); font-weight: 700; letter-spacing: 0.3px; }
+        .pay-text p { font-size: 11.5px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+        .pay-amt { font-weight: 800; color: var(--secondary); font-size: 16px; text-align: right; letter-spacing: 0.3px; }
+        .pay-amt.has-due { color: var(--danger); }
+        .pay-amt.has-adv { color: var(--info); }
         
-        .pay-actions { display: flex; justify-content: flex-end; gap: 10px; border-top: 1px dashed #CBD5E1; padding-top: 12px; }
-        .btn-sm { border: none; cursor: pointer; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
-        .btn-sm:active { transform: scale(0.95); }
-        .btn-sm.edit { background: #FEF3C7; color: #D97706; }
-        .btn-sm.delete { background: #FCE7F3; color: #BE185D; }
-        .btn-sm.share { background: var(--primary-light); color: var(--primary); }
+        .badge-status { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-top: 4px; letter-spacing: 0.4px; }
+        .badge-status.paid { background: var(--secondary-light); color: var(--secondary); }
+        .badge-status.due { background: var(--danger-light); color: var(--danger); }
+        .badge-status.advance { background: var(--info-light); color: var(--info); }
+        
+        .pay-actions { display: flex; justify-content: flex-end; gap: 10px; border-top: 1px dashed #E2E8F0; padding-top: 12px; }
+        .btn-sm { border: none; cursor: pointer; padding: 10px 14px; border-radius: 9px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; letter-spacing: 0.4px; min-height: 36px; }
+        .btn-sm:active { transform: scale(0.96); }
+        .btn-sm.edit { background: #FEF3C7; color: #B45309; }
+        .btn-sm.delete { background: #FEE2E2; color: #B91C1C; }
+        .btn-sm.share { background: #DBEAFE; color: #1D4ED8; }
 
-        .fab { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; border: none; padding: 16px 25px; border-radius: 30px; font-size: 15px; font-weight: 700; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4); cursor: pointer; display: flex; align-items: center; gap: 8px; z-index: 90; }
+        .fab { position: fixed; bottom: 24px; right: 20px; background: #2563EB; color: white; border: none; padding: 16px 24px; border-radius: 30px; font-size: 14.5px; font-weight: 700; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35); cursor: pointer; display: flex; align-items: center; gap: 10px; z-index: 90; min-height: 56px; letter-spacing: 0.5px; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); display: flex; align-items: flex-end; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); display: flex; align-items: flex-end; opacity: 0; visibility: hidden; transition: 0.25s; z-index: 100; }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        .bottom-sheet { background: var(--surface); width: 100%; padding: 25px 20px; border-radius: 30px 30px 0 0; transform: translateY(100%); transition: 0.3s; max-height: 90vh; overflow-y: auto; }
+        .bottom-sheet { background: var(--surface); width: 100%; padding: 24px 20px; border-radius: 26px 26px 0 0; transform: translateY(100%); transition: 0.25s cubic-bezier(0.1, 0.9, 0.2, 1); max-height: 90vh; overflow-y: auto; }
         .modal-overlay.active .bottom-sheet { transform: translateY(0); }
         
         .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .sheet-header h3 { font-size: 20px; font-weight: 800; }
+        .sheet-header h3 { font-size: 18px; font-weight: 800; letter-spacing: 0.3px; }
         
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 700; }
-        .form-control { width: 100%; padding: 14px; border: 2px solid #E2E8F0; border-radius: 14px; font-size: 15px; background: var(--bg); outline: none; }
-        .form-control:focus { border-color: var(--primary); background: white; }
-        .btn-submit { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 16px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer; }
-        .img-upload { width: 75px; height: 75px; border-radius: 20px; background: var(--primary-light); color: var(--primary); display: flex; justify-content: center; align-items: center; font-size: 25px; margin: 0 auto 15px auto; overflow: hidden; cursor: pointer; border: 2px dashed #94A3B8; }
-        .img-upload img { width: 100%; height: 100%; object-fit: cover; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.3px; }
+        .form-control { width: 100%; min-height: 48px; padding: 13px 14px; border: 1.5px solid #E2E8F0; border-radius: 12px; font-size: 14px; background: var(--bg); outline: none; letter-spacing: 0.2px; }
+        .form-control:focus { border-color: #2563EB; background: white; }
+        .form-control[readonly] { background: #F1F5F9; color: #475569; font-weight: 700; cursor: not-allowed; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .btn-submit { width: 100%; min-height: 52px; background: #2563EB; color: white; border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; margin-top: 10px; cursor: pointer; letter-spacing: 0.5px; }
 
-        /* RECEIPT TEMPLATE */
-        #receiptCaptureBox { position: absolute; left: -9999px; top: 0; width: 700px; background: white; padding: 40px; border-radius: 20px; color: #0F172A; font-family: 'Plus Jakarta Sans', sans-serif; border: 3px solid #E2E8F0; }
-        .rcpt-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 20px; margin-bottom: 30px; }
-        .rcpt-brand { display: flex; align-items: center; gap: 15px; }
-        .rcpt-logo { width: 70px; height: 70px; border-radius: 15px; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; font-size: 35px; overflow: hidden;}
-        .rcpt-logo img { width: 100%; height: 100%; object-fit: cover; }
-        .rcpt-title h1 { font-size: 28px; font-weight: 800; color: var(--primary-dark); margin-bottom: 5px; }
-        .rcpt-title p { font-size: 14px; color: var(--text-muted); font-weight: 600; letter-spacing: 2px; }
-        .rcpt-tag { background: #D1FAE5; color: #059669; padding: 10px 20px; border-radius: 12px; font-weight: 800; font-size: 20px; border: 2px solid #059669;}
-        .rcpt-details { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-        .rcpt-box { background: #F8FAFC; padding: 20px; border-radius: 15px; border: 1px solid #E2E8F0; }
-        .rcpt-box label { font-size: 14px; color: #64748B; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .rcpt-box span { font-size: 18px; font-weight: 800; color: #0F172A; }
-        .rcpt-amount-box { background: var(--primary-dark); color: white; padding: 25px; border-radius: 15px; text-align: center; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;}
-        .rcpt-amount-box div { text-align: left; }
-        .rcpt-amount-box p { font-size: 16px; opacity: 0.8; font-weight: 600; margin-bottom: 5px;}
-        .rcpt-amount-box h2 { font-size: 45px; font-weight: 800; color: #FCD34D;}
-        .rcpt-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; }
-        .rcpt-sign { text-align: center; }
-        .rcpt-sign div { width: 200px; height: 2px; background: #CBD5E1; margin-bottom: 10px; }
+        .img-upload { width: 80px; height: 80px; border-radius: 20px; background: var(--primary-light); color: #2563EB; display: flex; justify-content: center; align-items: center; font-size: 24px; margin: 0 auto 14px auto; overflow: hidden; cursor: pointer; border: 2px dashed #94A3B8; }
+        .img-upload img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Privacy Policy Content styling */
+        .policy-content { padding: 20px; font-size: 14px; color: var(--text-main); line-height: 1.6; }
+        .policy-content h3 { margin-top: 20px; margin-bottom: 8px; font-size: 16px; color: #1E3A8A; }
+        .policy-content p, .policy-content ul { margin-bottom: 12px; color: #475569; }
+        .policy-content ul { padding-left: 20px; }
     </style>
 </head>
 <body>
 
+    <!-- 0. AUTH SCREEN -->
+    <div id="authScreen" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="app-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h2 id="authTitle">Create Institute Account</h2>
+                <p id="authSubtitle">Set up your coaching in 1 minute</p>
+            </div>
+
+            <div class="auth-toggle">
+                <button type="button" id="tabRegister" class="active" onclick="switchAuthTab('register')">New Register</button>
+                <button type="button" id="tabLogin" onclick="switchAuthTab('login')">Existing Login</button>
+            </div>
+
+            <!-- REGISTER -->
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="img-upload" onclick="document.getElementById('regLogoInput').click()" id="regLogoBox">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <input type="file" id="regLogoInput" accept="image/*" style="display:none;" onchange="previewAndCompress(event, 'regLogoBox', 'tempRegLogo')">
+
+                <div class="form-group">
+                    <label>Institute / Coaching Name *</label>
+                    <input type="text" id="regInstName" class="form-control" placeholder="e.g. Global Study Institute" required>
+                </div>
+                <div class="form-group">
+                    <label>Director / Owner Name *</label>
+                    <input type="text" id="regOwnerName" class="form-control" placeholder="e.g. Sachin Kumar" required>
+                </div>
+                <div class="form-group">
+                    <label>Gmail Address *</label>
+                    <input type="email" id="regEmail" class="form-control" placeholder="name@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone / WhatsApp Number *</label>
+                    <input type="tel" id="regPhone" class="form-control" placeholder="10 Digit Phone Number" required>
+                </div>
+                <div class="form-group">
+                    <label>Institute Tagline / Subtitle</label>
+                    <input type="text" id="regTagline" class="form-control" placeholder="e.g. Education & Excellence">
+                </div>
+                <p style="font-size: 11px; text-align: center; color: #94A3B8; margin-top: 10px;">By registering, you agree to our Privacy Policy.</p>
+                <button type="submit" class="btn-submit" id="btnRegisterSubmit"><i class="fas fa-check-circle"></i> Create Institute & Start</button>
+            </form>
+
+            <!-- LOGIN -->
+            <form id="loginForm" style="display:none;" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Registered Gmail Address *</label>
+                    <input type="email" id="loginIdentifier" class="form-control" placeholder="Enter your registered Gmail" required>
+                </div>
+                <button type="submit" class="btn-submit" id="btnLoginSubmit" style="background:#1E3A8A;"><i class="fas fa-sign-in-alt"></i> Instant Login</button>
+            </form>
+        </div>
+    </div>
+
     <!-- 1. DASHBOARD SCREEN -->
-    <div id="homeScreen" class="screen active">
+    <div id="homeScreen" class="screen">
         <div class="dashboard-header">
             <div class="app-bar">
                 <div class="brand">
                     <div class="logo-icon" id="mainHeaderLogo"><i class="fas fa-graduation-cap"></i></div>
                     <div>
-                        <h2>Global Study Institute</h2>
-                        <p>Fee Management</p>
+                        <h2 id="dashInstName">Institute Name</h2>
+                        <p id="dashInstTag">Fee Management</p>
+                        <div class="sync-pill synced" id="syncStatus"><i class="fas fa-cloud"></i> Ready</div>
                     </div>
                 </div>
                 <i class="fas fa-cog settings-icon" onclick="switchScreen('settingsScreen')"></i>
@@ -160,20 +240,20 @@
         </div>
 
         <div class="main-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="Search by name..." onkeyup="renderList()">
+            <input type="text" id="searchInput" class="search-box" placeholder="Search student by name or ID..." onkeyup="renderList()">
             <div id="listContainer"></div>
         </div>
         
-        <button class="fab" onclick="openStudentModal('add')"><i class="fas fa-plus"></i> Add Student</button>
+        <button class="fab" onclick="openStudentModal('add')"><i class="fas fa-user-plus"></i> Add Student</button>
     </div>
 
     <!-- 2. PROFILE SCREEN -->
     <div id="profileScreen" class="screen">
-        <div class="dashboard-header" style="padding-bottom: 70px;">
+        <div class="dashboard-header" style="padding-bottom: 60px;">
             <div class="app-bar">
                 <i class="fas fa-arrow-left settings-icon" onclick="switchScreen('homeScreen')"></i>
                 <h2>Student Profile</h2>
-                <div style="display:flex; gap:15px;">
+                <div style="display:flex; gap:16px;">
                     <i class="fas fa-pen" onclick="openStudentModal('edit')"></i>
                     <i class="fas fa-trash" style="color: #FDA4AF;" onclick="deleteStudent()"></i>
                 </div>
@@ -186,25 +266,26 @@
             <p class="fname" id="pFname">S/o Father</p>
             
             <div class="data-grid">
+                <div class="data-item"><label>Student ID</label><span id="pStuCode" style="color: #1D4ED8;">-</span></div>
                 <div class="data-item"><label>Class / Batch</label><span id="pBatch">-</span></div>
                 <div class="data-item"><label>Monthly Fee</label><span id="pFee" style="color: var(--secondary);">₹0</span></div>
                 <div class="data-item"><label>Admission Date</label><span id="pDate">-</span></div>
-                <div class="data-item"><label>Phone</label><span id="pPhone">-</span></div>
+                <div class="data-item" style="grid-column: span 2;"><label>Phone</label><span id="pPhone">-</span></div>
             </div>
 
             <div class="action-grid">
-                <a id="btnCall" href="#" class="btn-action call"><i class="fas fa-phone-alt"></i> Call</a>
-                <a id="btnWa" href="#" class="btn-action wa" target="_blank"><i class="fab fa-whatsapp"></i> Message</a>
+                <button id="btnCall" class="btn-action call" onclick="makeCall()"><i class="fas fa-phone-alt"></i> Call</button>
+                <button id="btnWa" class="btn-action wa" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Message</button>
             </div>
         </div>
 
-        <h3 class="section-heading">Payment History</h3>
+        <h3 class="section-heading" style="margin-top: 10px;">Payment History</h3>
         <div id="paymentsList" class="payment-list"></div>
 
-        <button class="fab" onclick="openFeeModal()"><i class="fas fa-rupee-sign"></i> Record Fee</button>
+        <button class="fab" onclick="openFeeModal()"><i class="fas fa-plus-circle"></i> Record Fee</button>
     </div>
 
-    <!-- 3. SETTINGS SCREEN -->
+    <!-- 3. SETTINGS SCREEN (PLAY STORE READY) -->
     <div id="settingsScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -214,29 +295,143 @@
             </div>
         </div>
         <div class="settings-list">
-            <div class="setting-item" onclick="document.getElementById('instituteLogoInput').click()">
-                <div class="setting-icon" style="background: #E0E7FF; color: #4F46E5;"><i class="fas fa-image"></i></div>
+            
+            <div class="section-heading">Data Management</div>
+            <div class="setting-item" onclick="openEditInstModal()">
+                <div class="setting-icon" style="background: #E0E7FF; color: #4F46E5;"><i class="fas fa-university"></i></div>
                 <div>
-                    <h4 style="font-size: 16px; font-weight:700;">Update Institute Logo</h4>
-                    <p style="font-size: 12px; color:var(--text-muted);">Set logo for App & Receipts</p>
+                    <h4 style="font-size: 15px; font-weight:700;">Institute Profile</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Change name, tagline & logo</p>
                 </div>
-                <input type="file" id="instituteLogoInput" accept="image/*" style="display:none" onchange="saveInstituteLogo(event)">
+            </div>
+            <div class="setting-item" onclick="triggerManualSync()">
+                <div class="setting-icon" style="background: #D1FAE5; color: #059669;"><i class="fas fa-cloud-upload-alt"></i></div>
+                <div>
+                    <h4 style="font-size: 15px; font-weight:700;">Sync to Google Drive</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Push current data to cloud</p>
+                </div>
             </div>
             <div class="setting-item" onclick="exportData()">
-                <div class="setting-icon" style="background: var(--primary-light); color: var(--primary);"><i class="fas fa-download"></i></div>
+                <div class="setting-icon" style="background: var(--primary-light); color: #2563EB;"><i class="fas fa-download"></i></div>
                 <div>
-                    <h4 style="font-size: 16px; font-weight:700;">Backup Data</h4>
-                    <p style="font-size: 12px; color:var(--text-muted);">Save all students & fees</p>
+                    <h4 style="font-size: 15px; font-weight:700;">Download Backup File</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Offline copy (.json) on phone</p>
                 </div>
             </div>
             <div class="setting-item" onclick="document.getElementById('importFile').click()">
                 <div class="setting-icon" style="background: var(--secondary-light); color: var(--secondary);"><i class="fas fa-upload"></i></div>
                 <div>
-                    <h4 style="font-size: 16px; font-weight:700;">Restore Data</h4>
-                    <p style="font-size: 12px; color:var(--text-muted);">Load data from backup</p>
+                    <h4 style="font-size: 15px; font-weight:700;">Restore from File</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Load data from .json backup</p>
                 </div>
                 <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
             </div>
+            
+            <!-- PLAY STORE MANDATORY LINKS -->
+            <div class="section-heading">About & Legal</div>
+            <div class="setting-item" onclick="switchScreen('privacyScreen')">
+                <div class="setting-icon" style="background: #F3E8FF; color: #7E22CE;"><i class="fas fa-shield-alt"></i></div>
+                <div>
+                    <h4 style="font-size: 15px; font-weight:700;">Privacy Policy</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Read our data safety policy</p>
+                </div>
+            </div>
+            <div class="setting-item" onclick="window.location.href='mailto:support@globalstudyinstitute.com'">
+                <div class="setting-icon" style="background: #E0F2FE; color: #0284C7;"><i class="fas fa-envelope"></i></div>
+                <div>
+                    <h4 style="font-size: 15px; font-weight:700;">Help & Support</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Contact developer for issues</p>
+                </div>
+            </div>
+
+            <!-- DANGER ZONE -->
+            <div class="section-heading" style="color: var(--danger);">Account Setup</div>
+            <div class="setting-item" onclick="handleLogout()" style="border-color: #FEE2E2;">
+                <div class="setting-icon" style="background: #FEE2E2; color: #DC2626;"><i class="fas fa-sign-out-alt"></i></div>
+                <div>
+                    <h4 style="font-size: 15px; font-weight:700; color: #DC2626;">Log Out</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Switch or disconnect account</p>
+                </div>
+            </div>
+            <!-- Data Deletion (Play Store Mandatory) -->
+            <div class="setting-item" onclick="deleteEntireAccount()" style="border-color: #FECACA; background: #FEF2F2;">
+                <div class="setting-icon" style="background: #DC2626; color: white;"><i class="fas fa-user-times"></i></div>
+                <div>
+                    <h4 style="font-size: 15px; font-weight:700; color: #B91C1C;">Delete Account & Data</h4>
+                    <p style="font-size: 12px; color:#B91C1C; margin-top:2px;">Permanently wipe all local data</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. PRIVACY POLICY SCREEN (NATIVE APP SCREEN) -->
+    <div id="privacyScreen" class="screen">
+        <div class="dashboard-header" style="padding-bottom: 30px;">
+            <div class="app-bar">
+                <i class="fas fa-arrow-left settings-icon" onclick="switchScreen('settingsScreen')"></i>
+                <h2>Privacy Policy</h2>
+                <i class="fas fa-shield-alt"></i>
+            </div>
+        </div>
+        <div class="policy-content">
+            <h3>1. Introduction</h3>
+            <p>Welcome to Coaching Institute Manager. We are committed to protecting your personal data and your right to privacy.</p>
+            
+            <h3>2. Data We Collect</h3>
+            <ul>
+                <li><strong>Account Information:</strong> Institute name, owner name, email address, and phone number to create your account.</li>
+                <li><strong>Student Data:</strong> Student names, contact details, and fee payment histories entered by you.</li>
+                <li><strong>Images:</strong> Institute logo and student photos processed locally and safely.</li>
+            </ul>
+
+            <h3>3. How We Use Your Data</h3>
+            <p>Your data is strictly used for the core functionality of the app (managing students and generating receipts). We do not sell, rent, or share your data with third-party advertising or marketing agencies.</p>
+
+            <h3>4. Data Storage & Safety</h3>
+            <p>All data is stored securely in your device's Local Storage to allow offline usage. A backup of this data is securely synced to a centralized Google Drive repository for auto-restoration.</p>
+
+            <h3>5. Data Deletion</h3>
+            <p>You have the right to request the deletion of your data. You can delete your local data instantly by using the "Delete Account & Data" option in the App Settings.</p>
+
+            <h3>6. Contact Us</h3>
+            <p>If you have questions or comments about this policy, you may email our support team via the Help & Support section.</p>
+            
+            <br>
+            <p><em>Last Updated: August 2026</em></p>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT INSTITUTE -->
+    <div id="instModal" class="modal-overlay">
+        <div class="bottom-sheet">
+            <div class="sheet-header">
+                <h3>Institute Details</h3>
+                <i class="fas fa-times" style="font-size: 20px; color:var(--text-muted); cursor:pointer;" onclick="closeModal('instModal')"></i>
+            </div>
+            <form id="instEditForm" onsubmit="saveInstituteSettings(event)">
+                <div class="img-upload" onclick="document.getElementById('editLogoInput').click()" id="editLogoBox">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <input type="file" id="editLogoInput" accept="image/*" style="display:none;" onchange="previewAndCompress(event, 'editLogoBox', 'tempEditLogo')">
+
+                <div class="form-group">
+                    <label>Institute Name</label>
+                    <input type="text" id="editInstName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Owner / Director</label>
+                    <input type="text" id="editOwnerName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact Phone (For Receipts)</label>
+                    <input type="tel" id="editPhone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Tagline / Subtitle</label>
+                    <input type="text" id="editTagline" class="form-control">
+                </div>
+                <button type="submit" class="btn-submit">Save Settings</button>
+            </form>
         </div>
     </div>
 
@@ -252,8 +447,12 @@
                 <input type="hidden" id="sPhotoStr">
                 
                 <div class="img-upload" onclick="document.getElementById('imgInput').click()" id="imgBox"><i class="fas fa-camera"></i></div>
-                <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="previewImg(event)">
+                <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="previewAndCompressStudent(event)">
                 
+                <div class="form-group">
+                    <label>Student ID (Auto-Generated)</label>
+                    <input type="text" id="sCode" class="form-control" readonly>
+                </div>
                 <div class="form-group">
                     <label>Student Name</label>
                     <input type="text" id="sName" class="form-control" required>
@@ -291,19 +490,45 @@
                 <i class="fas fa-times" style="font-size: 20px; color:var(--text-muted); cursor:pointer;" onclick="closeModal('paymentModal')"></i>
             </div>
             <form id="feeForm" onsubmit="saveFee(event)">
-                <input type="hidden" id="fId"> <!-- Hidden ID for Editing -->
-                <div class="form-group">
-                    <label>1. किस महीने की फीस है? (Fee Month)</label>
-                    <input type="month" id="fMonth" class="form-control" required>
+                <input type="hidden" id="fId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fee Month</label>
+                        <input type="month" id="fMonth" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Date</label>
+                        <input type="date" id="fPayDate" class="form-control" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>2. किस तारीख को फीस मिली? (Payment Date)</label>
-                    <input type="date" id="fPayDate" class="form-control" required>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Total Fee (₹)</label>
+                        <input type="number" id="fBaseFee" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Discount (₹)</label>
+                        <input type="number" id="fDiscount" class="form-control" value="0" min="0" oninput="recalcPayment()">
+                    </div>
                 </div>
+
                 <div class="form-group">
                     <label>Amount Received (₹)</label>
-                    <input type="number" id="fAmount" class="form-control" required>
+                    <input type="number" id="fAmount" class="form-control" required min="0" oninput="recalcPayment()">
                 </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Due Amount (₹)</label>
+                        <input type="number" id="fDue" class="form-control" readonly style="color: var(--danger); font-weight:800;" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Advance (₹)</label>
+                        <input type="number" id="fAdv" class="form-control" readonly style="color: var(--info); font-weight:800;" value="0">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Payment Mode</label>
                     <select id="fMode" class="form-control">
@@ -316,90 +541,306 @@
         </div>
     </div>
 
-    <!-- RECEIPT TEMPLATE -->
-    <div id="receiptCaptureBox">
-        <div class="rcpt-header">
-            <div class="rcpt-brand">
-                <div class="rcpt-logo" id="rcptLogo"><i class="fas fa-graduation-cap"></i></div>
-                <div class="rcpt-title">
-                    <h1>Global Study Institute</h1>
-                    <p>OFFICIAL FEE RECEIPT</p>
-                </div>
-            </div>
-            <div class="rcpt-tag">PAID</div>
-        </div>
-        <div class="rcpt-details">
-            <div class="rcpt-box"><label>Student Name</label><span id="rName">Student Name</span></div>
-            <div class="rcpt-box"><label>Father's Name</label><span id="rFname">Father Name</span></div>
-            <div class="rcpt-box"><label>Class / Batch</label><span id="rBatch">Batch</span></div>
-            <div class="rcpt-box"><label>Payment Date</label><span id="rPayDate">Date</span></div>
-        </div>
-        <div class="rcpt-amount-box">
-            <div>
-                <p>Payment Received For</p>
-                <h3 style="font-size: 22px; font-weight:700;" id="rMonth">Month 2026</h3>
-                <p style="margin-top:5px; opacity:0.9;">Mode: <span id="rMode">Cash</span></p>
-            </div>
-            <h2 id="rAmount">₹0</h2>
-        </div>
-        <div class="rcpt-footer">
-            <div style="font-size: 14px; color: #64748B; font-weight: 600;">
-                <p>Transaction ID: <span id="rTxn">#000000</span></p>
-                <p style="margin-top:5px;">System Generated Receipt</p>
-            </div>
-            <div class="rcpt-sign">
-                <div></div>
-                <p>Authorized Signatory</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT -->
     <script>
-        let students = JSON.parse(localStorage.getItem('gsi_students')) || [];
-        let payments = JSON.parse(localStorage.getItem('gsi_payments')) || [];
-        let instLogo = localStorage.getItem('gsi_logo') || '';
+        const CLOUD_SYNC_URL = "https://script.google.com/macros/s/AKfycbwsxyIAV_bsbx2K2UKR9Dg3KPrFqIGcpF83xt02zII_AZeyXU77mOXpV8AO5_8pf1vvGA/exec";
+
+        // SAFE STORAGE HELPER (PREVENTS QUOTA ERRORS)
+        function safeSetItem(key, value) {
+            try {
+                localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
+            } catch(e) {
+                console.warn("Storage Quota Managed:", key);
+            }
+        }
+
+        function safeGetItem(key, fallback = null) {
+            try {
+                const item = localStorage.getItem(key);
+                return item ? JSON.parse(item) : fallback;
+            } catch(e) {
+                return fallback;
+            }
+        }
+
+        let currentAccount = safeGetItem('gsi_current_user', null);
+        let allAccounts = safeGetItem('gsi_accounts', []);
+        let students = [];
+        let payments = [];
         let curId = null;
+        let activePhone = '';
+        let tempRegLogo = '';
+        let tempEditLogo = '';
 
-        function applyLogo() {
-            if(instLogo) {
-                document.getElementById('mainHeaderLogo').innerHTML = `<img src="${instLogo}">`;
-                document.getElementById('rcptLogo').innerHTML = `<img src="${instLogo}">`;
-            }
-        }
-        applyLogo();
+        // IMAGE COMPRESSION (Ensures Tiny 10KB images instead of 5MB)
+        function compressImage(file, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const maxW = 120, maxH = 120;
+                    let width = img.width, height = img.height;
 
-        function saveInstituteLogo(e) {
-            const file = e.target.files[0];
-            if(file) {
-                const r = new FileReader();
-                r.onload = ev => {
-                    instLogo = ev.target.result;
-                    localStorage.setItem('gsi_logo', instLogo);
-                    applyLogo();
-                    alert("Institute Logo Updated!");
-                    switchScreen('homeScreen');
+                    if (width > height) {
+                        if (width > maxW) { height *= maxW / width; width = maxW; }
+                    } else {
+                        if (height > maxH) { width *= maxH / height; height = maxH; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    callback(canvas.toDataURL('image/jpeg', 0.6));
                 };
-                r.readAsDataURL(file);
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function previewAndCompress(e, boxId, globalVarName) {
+            const file = e.target.files[0];
+            if (file) {
+                compressImage(file, (dataUrl) => {
+                    if (globalVarName === 'tempRegLogo') tempRegLogo = dataUrl;
+                    if (globalVarName === 'tempEditLogo') tempEditLogo = dataUrl;
+                    document.getElementById(boxId).innerHTML = `<img src="${dataUrl}">`;
+                });
             }
         }
+
+        function previewAndCompressStudent(e) {
+            const file = e.target.files[0];
+            if (file) {
+                compressImage(file, (dataUrl) => {
+                    document.getElementById('sPhotoStr').value = dataUrl;
+                    document.getElementById('imgBox').innerHTML = `<img src="${dataUrl}">`;
+                });
+            }
+        }
+
+        function setSyncStatus(isSyncing) {
+            const el = document.getElementById('syncStatus');
+            if (!el) return;
+            el.className = isSyncing ? "sync-pill syncing" : "sync-pill synced";
+            el.innerHTML = isSyncing ? `<i class="fas fa-spinner fa-spin"></i> Syncing...` : `<i class="fas fa-cloud"></i> Ready`;
+        }
+
+        function initApp() {
+            if (currentAccount) {
+                students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
+                payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
+                document.getElementById('authScreen').style.display = 'none';
+                applyInstituteDetails();
+                switchScreen('homeScreen');
+            } else {
+                document.getElementById('authScreen').style.display = 'flex';
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            }
+        }
+
+        function applyInstituteDetails() {
+            if (!currentAccount) return;
+            document.getElementById('dashInstName').innerText = currentAccount.instName || "Global Study Institute";
+            document.getElementById('dashInstTag').innerText = currentAccount.tagline || "Fee Management";
+            
+            const logoContainer = document.getElementById('mainHeaderLogo');
+            logoContainer.innerHTML = currentAccount.logo ? `<img src="${currentAccount.logo}">` : `<i class="fas fa-graduation-cap"></i>`;
+        }
+
+        function switchAuthTab(tab) {
+            if (tab === 'register') {
+                document.getElementById('tabRegister').classList.add('active');
+                document.getElementById('tabLogin').classList.remove('active');
+                document.getElementById('registerForm').style.display = 'block';
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('authTitle').innerText = "Create Institute Account";
+                document.getElementById('authSubtitle').innerText = "Set up your coaching in 1 minute";
+            } else {
+                document.getElementById('tabLogin').classList.add('active');
+                document.getElementById('tabRegister').classList.remove('active');
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('authTitle').innerText = "Welcome Back";
+                document.getElementById('authSubtitle').innerText = "Instant Login";
+            }
+        }
+
+        function syncToCloud() {
+            if (!currentAccount || !CLOUD_SYNC_URL) return;
+            setSyncStatus(true);
+            try {
+                fetch(CLOUD_SYNC_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentAccount.email,
+                        action: 'sync',
+                        payload: { account: currentAccount, students: students, payments: payments }
+                    })
+                }).catch(() => {});
+                setTimeout(() => setSyncStatus(false), 1200);
+            } catch(e) {
+                setSyncStatus(false);
+            }
+        }
+
+        function triggerManualSync() {
+            alert("Data syncing to Google Drive...");
+            syncToCloud();
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const phone = document.getElementById('regPhone').value.trim();
+
+            const existing = allAccounts.find(a => a.email === email || a.phone === phone);
+            if (existing) {
+                alert("Account already exists! Redirecting to Login...");
+                document.getElementById('loginIdentifier').value = email;
+                switchAuthTab('login');
+                return;
+            }
+
+            const newAccount = {
+                instName: document.getElementById('regInstName').value.trim(),
+                ownerName: document.getElementById('regOwnerName').value.trim(),
+                email: email,
+                phone: phone,
+                tagline: document.getElementById('regTagline').value.trim() || "Education & Excellence",
+                logo: tempRegLogo || ''
+            };
+
+            allAccounts.push(newAccount);
+            safeSetItem('gsi_accounts', allAccounts);
+            
+            currentAccount = newAccount;
+            safeSetItem('gsi_current_user', currentAccount);
+
+            syncToCloud();
+            alert("Institute Created Successfully!");
+            initApp();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginIdentifier').value.trim().toLowerCase();
+            
+            const found = allAccounts.find(a => a.email === email);
+            if (found) {
+                currentAccount = found;
+            } else {
+                currentAccount = { 
+                    instName: "Institute Settings", 
+                    email: email, 
+                    phone: "Update via Settings", 
+                    tagline: "Fee Management", 
+                    logo: "" 
+                };
+                allAccounts.push(currentAccount);
+                safeSetItem('gsi_accounts', allAccounts);
+            }
+            
+            safeSetItem('gsi_current_user', currentAccount);
+            initApp();
+            syncToCloud();
+        }
+
+        function handleLogout() {
+            if (confirm("क्या आप इस अकाउंट से लॉगआउट करना चाहते हैं?")) {
+                currentAccount = null;
+                try { localStorage.removeItem('gsi_current_user'); } catch(e){}
+                initApp();
+            }
+        }
+
+        function deleteEntireAccount() {
+            if(confirm("WARNING: This will permanently delete your account and all data from this device! Are you sure?")) {
+                if(confirm("FINAL WARNING: All your offline student records and fee history will be erased! Proceed?")) {
+                    if(currentAccount) {
+                        localStorage.removeItem(`gsi_students_${currentAccount.email}`);
+                        localStorage.removeItem(`gsi_payments_${currentAccount.email}`);
+                        allAccounts = allAccounts.filter(a => a.email !== currentAccount.email);
+                        safeSetItem('gsi_accounts', allAccounts);
+                    }
+                    localStorage.removeItem('gsi_current_user');
+                    currentAccount = null;
+                    students = [];
+                    payments = [];
+                    alert("Account and Data successfully deleted.");
+                    initApp();
+                }
+            }
+        }
+
+        function openEditInstModal() {
+            if (!currentAccount) return;
+            document.getElementById('editInstName').value = currentAccount.instName;
+            document.getElementById('editOwnerName').value = currentAccount.ownerName || '';
+            document.getElementById('editPhone').value = currentAccount.phone || '';
+            document.getElementById('editTagline').value = currentAccount.tagline || '';
+            tempEditLogo = currentAccount.logo || '';
+            document.getElementById('editLogoBox').innerHTML = tempEditLogo ? `<img src="${tempEditLogo}">` : `<i class="fas fa-camera"></i>`;
+            document.getElementById('instModal').classList.add('active');
+        }
+
+        function saveInstituteSettings(e) {
+            e.preventDefault();
+            currentAccount.instName = document.getElementById('editInstName').value.trim();
+            currentAccount.ownerName = document.getElementById('editOwnerName').value.trim();
+            currentAccount.phone = document.getElementById('editPhone').value.trim();
+            currentAccount.tagline = document.getElementById('editTagline').value.trim();
+            currentAccount.logo = tempEditLogo || currentAccount.logo || '';
+
+            const idx = allAccounts.findIndex(a => a.email === currentAccount.email);
+            if (idx !== -1) allAccounts[idx] = currentAccount;
+            safeSetItem('gsi_accounts', allAccounts);
+            safeSetItem('gsi_current_user', currentAccount);
+
+            applyInstituteDetails();
+            closeModal('instModal');
+            syncToCloud();
+            alert("Institute details updated!");
+        }
+
+        function persistData() {
+            if (currentAccount) {
+                safeSetItem(`gsi_students_${currentAccount.email}`, students);
+                safeSetItem(`gsi_payments_${currentAccount.email}`, payments);
+                syncToCloud();
+            }
+        }
+
+        function handleBackNavigation() {
+            let activeModal = document.querySelector('.modal-overlay.active');
+            if (activeModal) { activeModal.classList.remove('active'); return true; }
+            if (document.getElementById('profileScreen').classList.contains('active') || 
+                document.getElementById('settingsScreen').classList.contains('active')) {
+                switchScreen('homeScreen'); return true;
+            }
+            if (document.getElementById('privacyScreen').classList.contains('active')) {
+                switchScreen('settingsScreen'); return true;
+            }
+            if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं?")) {
+                if (navigator.app && navigator.app.exitApp) { navigator.app.exitApp(); }
+                else { window.history.back(); }
+            } else {
+                window.history.pushState({ screen: 'home' }, '');
+            }
+            return false;
+        }
+
+        window.addEventListener('popstate', handleBackNavigation);
+        document.addEventListener("backbutton", (e) => { e.preventDefault(); handleBackNavigation(); }, false);
+        window.history.pushState({ screen: 'home' }, '');
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
-            if(screenId === 'homeScreen') { curId = null; renderList(); }
-        }
-
-        function previewImg(e) {
-            const file = e.target.files[0];
-            if(file) {
-                const r = new FileReader();
-                r.onload = ev => {
-                    document.getElementById('sPhotoStr').value = ev.target.result;
-                    document.getElementById('imgBox').innerHTML = `<img src="${ev.target.result}">`;
-                };
-                r.readAsDataURL(file);
-            }
+            if (screenId === 'homeScreen') { curId = null; renderList(); }
+            else { window.history.pushState({ screen: screenId }, ''); }
         }
 
         function calcStats() {
@@ -408,8 +849,8 @@
             const currM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
             let tRev = 0, mRev = 0;
             payments.forEach(p => {
-                tRev += parseFloat(p.amt);
-                if(p.m === currM) mRev += parseFloat(p.amt);
+                tRev += parseFloat(p.amt || 0);
+                if(p.m === currM) mRev += parseFloat(p.amt || 0);
             });
             document.getElementById('dashTotalRev').innerText = `₹${tRev}`;
             document.getElementById('dashMonthRev').innerText = `₹${mRev}`;
@@ -419,21 +860,25 @@
             const box = document.getElementById('listContainer');
             const txt = document.getElementById('searchInput').value.toLowerCase();
             box.innerHTML = '';
-            const filtered = students.filter(s => s.n.toLowerCase().includes(txt));
+            
+            const filtered = students.filter(s => 
+                s.n.toLowerCase().includes(txt) || (s.code && s.code.toLowerCase().includes(txt))
+            );
 
             if(!filtered.length) {
-                box.innerHTML = `<div style="text-align:center; padding:50px 20px; color:var(--text-muted);"><p>No Students Found</p></div>`;
+                box.innerHTML = `<div style="text-align:center; padding:45px 20px; color:var(--text-muted); font-size:14px;"><p>No Students Found</p></div>`;
                 calcStats(); return;
             }
 
             filtered.forEach(s => {
                 const av = s.pic ? `<img src="${s.pic}" class="avatar">` : `<div class="avatar">${s.n.charAt(0)}</div>`;
+                const displayCode = s.code ? `<span class="sid-badge">${s.code}</span>` : '';
                 box.innerHTML += `
                     <div class="student-card" onclick="openProfile(${s.id})">
                         ${av}
                         <div class="card-content">
                             <div class="card-header-row">
-                                <h4>${s.n}</h4><span style="font-weight:700; color:var(--secondary);">₹${s.fee}</span>
+                                <h4>${s.n} ${displayCode}</h4><span style="font-weight:700; color:var(--secondary); font-size:14px;">₹${s.fee}</span>
                             </div>
                             <p>S/o ${s.fn}</p>
                             <span class="batch-badge">${s.b}</span>
@@ -443,15 +888,11 @@
             calcStats();
         }
 
-        // 100% Robust Date Formatter (No NaN Errors)
         function formatDate(dateString) {
             if (!dateString) return '-';
             const parts = dateString.split('-');
             if(parts.length === 3) {
-                const y = parseInt(parts[0]);
-                const m = parseInt(parts[1]) - 1; // Month is 0-indexed in JS Date
-                const d = parseInt(parts[2]);
-                const dateObj = new Date(y, m, d);
+                const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
                 return `${dateObj.getDate()} ${dateObj.toLocaleString('en',{month:'short'})} ${dateObj.getFullYear()}`;
             }
             return dateString;
@@ -461,89 +902,206 @@
             curId = id; const s = students.find(x => x.id === id);
             document.getElementById('pName').innerText = s.n;
             document.getElementById('pFname').innerText = `S/o ${s.fn}`;
+            document.getElementById('pStuCode').innerText = s.code || 'N/A';
             document.getElementById('pBatch').innerText = s.b;
             document.getElementById('pFee').innerText = `₹${s.fee}`;
             document.getElementById('pPhone').innerText = s.ph;
             document.getElementById('pDate').innerText = formatDate(s.ad);
+            activePhone = s.ph;
             
             const av = document.getElementById('pAvatar');
             av.innerHTML = s.pic ? `<img src="${s.pic}" style="width:100%; height:100%; border-radius:20px; object-fit:cover;">` : s.n.charAt(0);
-            
-            document.getElementById('btnCall').href = `tel:+91${s.ph}`;
-            document.getElementById('btnWa').href = `https://wa.me/91${s.ph}`;
             
             renderFees();
             switchScreen('profileScreen');
         }
 
-        // New Render Fees with Clean Action Row
+        function makeCall() { if(activePhone) window.location.href = `tel:${activePhone}`; }
+        function sendWhatsApp() { if(activePhone) { window.open(`https://wa.me/91${activePhone.replace(/\D/g, '').slice(-10)}`, '_system'); } }
+
         function renderFees() {
             const box = document.getElementById('paymentsList'); box.innerHTML = '';
             const sp = payments.filter(p => p.sid === curId).sort((a, b) => new Date(b.pDate) - new Date(a.pDate));
-            if(!sp.length) { box.innerHTML = `<p style="text-align:center; color:gray; padding:20px;">No fees recorded</p>`; return; }
+            if(!sp.length) { box.innerHTML = `<p style="text-align:center; color:#94A3B8; padding:20px; font-size:13px;">No fees recorded</p>`; return; }
             
             sp.forEach(p => {
                 const [y, m] = p.m.split('-');
                 const mName = new Date(y, m-1).toLocaleString('en', {month:'short'});
                 const payDateStr = formatDate(p.pDate);
+                const dueAmt = parseFloat(p.due || 0);
+                const advAmt = parseFloat(p.adv || 0);
+                const discAmt = parseFloat(p.disc || 0);
                 
+                let badgeHtml = '';
+                let amtClass = '';
+                let subAmtHtml = '';
+
+                if (dueAmt > 0) {
+                    badgeHtml = `<span class="badge-status due"><i class="fas fa-exclamation-circle"></i> Due: ₹${dueAmt}</span>`;
+                    amtClass = 'has-due';
+                    subAmtHtml = `<div style="font-size:11px; font-weight:700; color:var(--danger); margin-top:2px;">Due: ₹${dueAmt}</div>`;
+                } else if (advAmt > 0) {
+                    badgeHtml = `<span class="badge-status advance"><i class="fas fa-arrow-circle-up"></i> Adv: ₹${advAmt}</span>`;
+                    amtClass = 'has-adv';
+                    subAmtHtml = `<div style="font-size:11px; font-weight:700; color:var(--info); margin-top:2px;">Adv: +₹${advAmt}</div>`;
+                } else {
+                    badgeHtml = `<span class="badge-status paid"><i class="fas fa-check"></i> Fully Paid</span>`;
+                }
+
+                const extraInfo = discAmt > 0 ? ` • Disc: ₹${discAmt}` : '';
                 box.innerHTML += `
                     <div class="payment-card">
                         <div class="pay-header">
                             <div class="pay-info">
-                                <div class="pay-icon"><i class="fas fa-check"></i></div>
+                                <div class="pay-icon ${dueAmt > 0 ? 'partial' : (advAmt > 0 ? 'advance' : '')}">
+                                    <i class="fas ${dueAmt > 0 ? 'fa-clock' : (advAmt > 0 ? 'fa-wallet' : 'fa-check')}"></i>
+                                </div>
                                 <div class="pay-text">
-                                    <h5>Fee: ${mName} ${y}</h5>
-                                    <p>Paid on: ${payDateStr} • ${p.md}</p>
+                                    <h5>${mName} ${y} Fee</h5>
+                                    <p>${payDateStr} • ${p.md}${extraInfo}</p>
+                                    ${badgeHtml}
                                 </div>
                             </div>
-                            <div class="pay-amt">+₹${p.amt}</div>
+                            <div class="pay-amt ${amtClass}">+₹${p.amt}${subAmtHtml}</div>
                         </div>
                         <div class="pay-actions">
                             <button onclick="openFeeModal(${p.id})" class="btn-sm edit"><i class="fas fa-pen"></i> Edit</button>
                             <button onclick="deleteFee(${p.id})" class="btn-sm delete"><i class="fas fa-trash"></i></button>
-                            <button onclick="generateAndShareReceipt(${p.id})" class="btn-sm share"><i class="fas fa-share-alt"></i> Share</button>
+                            <button onclick="generateFastPDFReceipt(${p.id})" class="btn-sm share"><i class="fas fa-file-pdf"></i> PDF Receipt</button>
                         </div>
                     </div>`;
             });
         }
 
-        async function generateAndShareReceipt(paymentId) {
+        function recalcPayment() {
+            const base = parseFloat(document.getElementById('fBaseFee').value) || 0;
+            const disc = parseFloat(document.getElementById('fDiscount').value) || 0;
+            const paid = parseFloat(document.getElementById('fAmount').value) || 0;
+            const payable = Math.max(0, base - disc);
+            
+            if (paid >= payable) {
+                document.getElementById('fDue').value = 0;
+                document.getElementById('fAdv').value = paid - payable;
+            } else {
+                document.getElementById('fDue').value = payable - paid;
+                document.getElementById('fAdv').value = 0;
+            }
+        }
+
+        function generateFastPDFReceipt(paymentId) {
             const p = payments.find(x => x.id === paymentId);
             const s = students.find(x => x.id === p.sid);
-            
             const [y, m] = p.m.split('-');
             const mName = new Date(y, m-1).toLocaleString('en', {month:'long'});
 
-            document.getElementById('rName').innerText = s.n;
-            document.getElementById('rFname').innerText = s.fn;
-            document.getElementById('rBatch').innerText = s.b;
-            document.getElementById('rPayDate').innerText = formatDate(p.pDate);
-            document.getElementById('rMonth').innerText = `${mName} ${y}`;
-            document.getElementById('rAmount').innerText = `₹${p.amt}`;
-            document.getElementById('rMode').innerText = p.md;
-            document.getElementById('rTxn').innerText = `#TXN${p.id.toString().slice(-6)}`;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [100, 150] });
 
-            const element = document.getElementById('receiptCaptureBox');
-            alert("Generating High-Quality Receipt...");
+            doc.setFillColor(30, 58, 138);
+            doc.rect(0, 0, 100, 3.5, 'F');
+
+            let curY = 7.5;
+            if (currentAccount && currentAccount.logo) {
+                try { doc.addImage(currentAccount.logo, 'JPEG', 43, curY, 14, 14); curY += 17; } catch(e) { curY += 2; }
+            } else { curY += 2; }
+
+            const instTitle = (currentAccount && currentAccount.instName) ? currentAccount.instName.toUpperCase() : "COACHING INSTITUTE";
+            const instPhone = (currentAccount && currentAccount.phone) ? currentAccount.phone : "Contact Institute";
+            const instTag = (currentAccount && currentAccount.tagline) ? currentAccount.tagline : "Official Fee Receipt";
+
+            doc.setTextColor(30, 58, 138); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+            doc.text(instTitle, 50, curY, { align: "center" });
+
+            doc.setFontSize(7.5); doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "bold");
+            doc.text("FEE PAYMENT RECEIPT", 50, curY + 4, { align: "center" });
             
-            try {
-                const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' });
-                canvas.toBlob(async function(blob) {
-                    const file = new File([blob], `Receipt_${s.n.replace(/\s/g, '')}_${mName}.jpg`, { type: "image/jpeg" });
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({ files: [file], title: 'Fee Receipt' });
-                        } catch (error) {}
-                    } else {
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url; a.download = file.name;
-                        a.click();
-                        alert("Receipt downloaded! You can now send it via WhatsApp.");
-                    }
-                }, 'image/jpeg', 0.95);
-            } catch (err) { alert("Error generating receipt."); }
+            doc.setFont("helvetica", "normal"); doc.setFontSize(6.8);
+            doc.text(`Contact: +91 ${instPhone} | ${instTag}`, 50, curY + 7.5, { align: "center" });
+
+            doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.3);
+            doc.line(8, curY + 10, 92, curY + 10);
+
+            let metaY = curY + 14;
+            doc.setFontSize(7.2); doc.setTextColor(100, 116, 139);
+            doc.text(`Receipt: #TXN${p.id.toString().slice(-6)}`, 8, metaY);
+            doc.text(`Date: ${formatDate(p.pDate)}`, 92, metaY, { align: "right" });
+
+            let card1Y = metaY + 2.5;
+            doc.setFillColor(248, 250, 252); doc.roundedRect(8, card1Y, 84, 28, 2, 2, 'F');
+            doc.setDrawColor(226, 232, 240); doc.roundedRect(8, card1Y, 84, 28, 2, 2, 'D');
+
+            const addCompactRow = (lbl, val, rowY) => {
+                doc.setFontSize(7.2); doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "normal");
+                doc.text(lbl, 11, rowY);
+                doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold");
+                doc.text(String(val), 38, rowY);
+            };
+
+            addCompactRow("Student ID:", s.code || 'N/A', card1Y + 5.5);
+            addCompactRow("Student Name:", s.n, card1Y + 11);
+            addCompactRow("Father's Name:", s.fn, card1Y + 16.5);
+            addCompactRow("Batch / Phone:", `${s.b}  |  +91 ${s.ph}`, card1Y + 22);
+
+            let card2Y = card1Y + 31;
+            doc.setFillColor(241, 245, 249); doc.roundedRect(8, card2Y, 84, 24, 2, 2, 'F');
+            doc.setDrawColor(203, 213, 225); doc.roundedRect(8, card2Y, 84, 24, 2, 2, 'D');
+
+            doc.setFontSize(7.8); doc.setTextColor(30, 58, 138); doc.setFont("helvetica", "bold");
+            doc.text(`Fee Period: ${mName} ${y}`, 11, card2Y + 5.5);
+            doc.text(`Mode: ${p.md}`, 89, card2Y + 5.5, { align: "right" });
+
+            doc.setDrawColor(226, 232, 240); doc.line(11, card2Y + 7.5, 89, card2Y + 7.5);
+
+            doc.setFontSize(7.2); doc.setFont("helvetica", "normal"); doc.setTextColor(100, 116, 139);
+            doc.text("Total Monthly Fee:", 11, card2Y + 12); doc.text(`Rs. ${p.baseFee || s.fee}`, 89, card2Y + 12, { align: "right" });
+            doc.text("Discount Allowed:", 11, card2Y + 16.5); doc.setTextColor(5, 150, 105); doc.text(`- Rs. ${p.disc || 0}`, 89, card2Y + 16.5, { align: "right" });
+
+            doc.setTextColor(100, 116, 139); doc.text("Net Payable:", 11, card2Y + 21);
+            const netPayable = (parseFloat(p.baseFee || s.fee) - parseFloat(p.disc || 0));
+            doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold"); doc.text(`Rs. ${netPayable}`, 89, card2Y + 21, { align: "right" });
+
+            let card3Y = card2Y + 27;
+            const dueAmt = parseFloat(p.due || 0);
+            const advAmt = parseFloat(p.adv || 0);
+
+            doc.setFillColor(30, 58, 138); doc.roundedRect(8, card3Y, 84, 15, 2, 2, 'F');
+            doc.setTextColor(219, 234, 254); doc.setFontSize(7.2); doc.setFont("helvetica", "normal");
+            doc.text("Amount Received:", 12, card3Y + 5.5);
+
+            doc.setTextColor(253, 224, 71); doc.setFontSize(11); doc.setFont("helvetica", "bold");
+            doc.text(`Rs. ${p.amt}`, 12, card3Y + 11.5);
+
+            if (dueAmt > 0) {
+                doc.setFillColor(220, 38, 38); doc.roundedRect(54, card3Y + 3.8, 34, 7.5, 1.5, 1.5, 'F');
+                doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont("helvetica", "bold");
+                doc.text(`DUE: Rs. ${dueAmt}`, 71, card3Y + 8.8, { align: "center" });
+            } else if (advAmt > 0) {
+                doc.setFillColor(2, 132, 199); doc.roundedRect(52, card3Y + 3.8, 36, 7.5, 1.5, 1.5, 'F');
+                doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont("helvetica", "bold");
+                doc.text(`ADVANCE: +Rs. ${advAmt}`, 70, card3Y + 8.8, { align: "center" });
+            } else {
+                doc.setFillColor(5, 150, 105); doc.roundedRect(58, card3Y + 3.8, 30, 7.5, 1.5, 1.5, 'F');
+                doc.setTextColor(255, 255, 255); doc.setFontSize(7.2); doc.setFont("helvetica", "bold");
+                doc.text("FULLY PAID", 73, card3Y + 8.8, { align: "center" });
+            }
+
+            let footY = card3Y + 20;
+            doc.setTextColor(148, 163, 184); doc.setFontSize(6.2); doc.setFont("helvetica", "normal");
+            doc.text("System Generated Receipt", 8, footY + 1);
+
+            doc.setDrawColor(203, 213, 225); doc.line(65, footY - 1, 92, footY - 1);
+            doc.setTextColor(71, 85, 105); doc.setFontSize(6.8); doc.setFont("helvetica", "bold");
+            doc.text("Authorized Signatory", 78.5, footY + 2.5, { align: "center" });
+
+            const pdfBlob = doc.output('blob');
+            window.open(URL.createObjectURL(pdfBlob), '_system');
+        }
+
+        function generateAutoStudentID() {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            return `${yy}${mm}${String(students.length + 1).padStart(2, '0')}`;
         }
 
         function saveStudent(e) {
@@ -554,6 +1112,7 @@
             
             const ns = {
                 id: sid ? parseInt(sid) : Date.now(),
+                code: document.getElementById('sCode').value || generateAutoStudentID(),
                 n: document.getElementById('sName').value,
                 fn: document.getElementById('sFname').value,
                 ph: cleanPhone,
@@ -563,15 +1122,19 @@
                 pic: document.getElementById('sPhotoStr').value
             };
             
-            if(sid) { students[students.findIndex(x => x.id == sid)] = ns; } 
-            else { students.push(ns); }
+            if(sid) { 
+                const index = students.findIndex(x => x.id == sid);
+                ns.code = students[index].code || ns.code;
+                students[index] = ns; 
+            } else { 
+                students.push(ns); 
+            }
             
-            localStorage.setItem('gsi_students', JSON.stringify(students));
+            persistData();
             closeModal('studentModal');
             sid ? openProfile(parseInt(sid)) : renderList();
         }
 
-        // Save Fee (Handles both Add & Edit)
         function saveFee(e) {
             e.preventDefault();
             const fid = document.getElementById('fId').value;
@@ -581,29 +1144,30 @@
                 sid: curId,
                 m: document.getElementById('fMonth').value,
                 pDate: document.getElementById('fPayDate').value,
+                baseFee: document.getElementById('fBaseFee').value,
+                disc: document.getElementById('fDiscount').value || 0,
                 amt: document.getElementById('fAmount').value,
+                due: document.getElementById('fDue').value || 0,
+                adv: document.getElementById('fAdv').value || 0,
                 md: document.getElementById('fMode').value
             };
 
             if(fid) {
-                // Edit Existing Payment
                 const index = payments.findIndex(p => p.id === parseInt(fid));
                 payments[index] = feeData;
             } else {
-                // Add New Payment
                 payments.push(feeData);
             }
 
-            localStorage.setItem('gsi_payments', JSON.stringify(payments));
+            persistData();
             closeModal('paymentModal'); 
             renderFees();
         }
 
-        // Delete Single Payment
         function deleteFee(feeId) {
             if(confirm("Are you sure you want to delete this payment record?")) {
                 payments = payments.filter(p => p.id !== feeId);
-                localStorage.setItem('gsi_payments', JSON.stringify(payments));
+                persistData();
                 renderFees();
             }
         }
@@ -612,19 +1176,19 @@
             if(confirm("Permanently delete this student & all fee records?")) {
                 students = students.filter(s => s.id !== curId);
                 payments = payments.filter(p => p.sid !== curId);
-                localStorage.setItem('gsi_students', JSON.stringify(students));
-                localStorage.setItem('gsi_payments', JSON.stringify(payments));
+                persistData();
                 switchScreen('homeScreen');
             }
         }
 
         function exportData() {
-            const data = { students: students, payments: payments };
-            const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
+            if (!currentAccount) return;
+            const data = { account: currentAccount, students: students, payments: payments };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
             const a = document.createElement("a");
-            a.href = url; a.download = `GSI_Backup_${new Date().getTime()}.json`;
-            a.click();
+            a.href = URL.createObjectURL(blob);
+            a.download = `${currentAccount.instName.replace(/\s+/g, '_')}_Backup.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
             alert("Backup Downloaded!");
         }
 
@@ -636,29 +1200,30 @@
                 try {
                     const data = JSON.parse(ev.target.result);
                     if(data.students && data.payments) {
-                        students = data.students; payments = data.payments;
-                        localStorage.setItem('gsi_students', JSON.stringify(students));
-                        localStorage.setItem('gsi_payments', JSON.stringify(payments));
-                        alert("Data Restored!");
-                        switchScreen('homeScreen');
+                        students = data.students; 
+                        payments = data.payments;
+                        if (data.account) { currentAccount = data.account; safeSetItem('gsi_current_user', currentAccount); }
+                        persistData();
+                        alert("Data Restored Successfully!");
+                        initApp();
                     }
-                } catch(err) {}
+                } catch(err) { alert("Invalid Backup File!"); }
             };
             reader.readAsText(file);
         }
 
-        // Open Modal functions (Student)
         function openStudentModal(mode) {
             document.getElementById('studentModal').classList.add('active');
+            window.history.pushState({ modal: 'studentModal' }, '');
             const frm = document.getElementById('studentForm');
             const title = document.getElementById('studentModalTitle');
             const btn = document.getElementById('studentSubmitBtn');
             
             if(mode === 'edit') {
-                title.innerText = "Edit Profile";
-                btn.innerText = "Update Profile";
+                title.innerText = "Edit Profile"; btn.innerText = "Update Profile";
                 const s = students.find(x => x.id === curId);
                 document.getElementById('sId').value = s.id;
+                document.getElementById('sCode').value = s.code || generateAutoStudentID();
                 document.getElementById('sName').value = s.n;
                 document.getElementById('sFname').value = s.fn;
                 document.getElementById('sPhone').value = s.ph;
@@ -670,45 +1235,44 @@
             } else {
                 frm.reset();
                 document.getElementById('sId').value = '';
+                document.getElementById('sCode').value = generateAutoStudentID();
                 document.getElementById('sPhotoStr').value = '';
                 document.getElementById('imgBox').innerHTML = `<i class="fas fa-camera"></i>`;
-                title.innerText = "Add Student";
-                btn.innerText = "Save Profile";
-                // Default date to today correctly YYYY-MM-DD
+                title.innerText = "Add Student"; btn.innerText = "Save Profile";
                 const d = new Date();
                 document.getElementById('sDate').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
             }
         }
 
-        // Open Modal functions (Fee)
         function openFeeModal(feeId = null) {
             document.getElementById('paymentModal').classList.add('active');
+            window.history.pushState({ modal: 'paymentModal' }, '');
             const frm = document.getElementById('feeForm');
             const title = document.getElementById('feeModalTitle');
             const btn = document.getElementById('feeSubmitBtn');
+            const s = students.find(x => x.id === curId);
             
             if (feeId) {
-                // Edit Mode
-                title.innerText = "Edit Fee Record";
-                btn.innerText = "Update Payment";
+                title.innerText = "Edit Fee Record"; btn.innerText = "Update Payment";
                 const p = payments.find(x => x.id === feeId);
                 document.getElementById('fId').value = p.id;
                 document.getElementById('fMonth').value = p.m;
                 document.getElementById('fPayDate').value = p.pDate;
+                document.getElementById('fBaseFee').value = p.baseFee || s.fee;
+                document.getElementById('fDiscount').value = p.disc || 0;
                 document.getElementById('fAmount').value = p.amt;
+                document.getElementById('fDue').value = p.due || 0;
+                document.getElementById('fAdv').value = p.adv || 0;
                 document.getElementById('fMode').value = p.md;
             } else {
-                // Add Mode
                 frm.reset();
-                title.innerText = "Record Fee";
-                btn.innerText = "Confirm Payment";
+                title.innerText = "Record Fee"; btn.innerText = "Confirm Payment";
                 document.getElementById('fId').value = '';
-                
-                // Get student's default fee
-                const s = students.find(x => x.id === curId);
+                document.getElementById('fBaseFee').value = s.fee;
+                document.getElementById('fDiscount').value = 0;
                 document.getElementById('fAmount').value = s.fee;
-                
-                // Default Date Setup YYYY-MM-DD
+                document.getElementById('fDue').value = 0;
+                document.getElementById('fAdv').value = 0;
                 const d = new Date();
                 document.getElementById('fMonth').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
                 document.getElementById('fPayDate').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -717,7 +1281,7 @@
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-        renderList();
+        initApp();
     </script>
 </body>
 </html>
