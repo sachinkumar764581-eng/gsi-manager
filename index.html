@@ -144,7 +144,6 @@
         .img-upload { width: 80px; height: 80px; border-radius: 20px; background: var(--primary-light); color: #2563EB; display: flex; justify-content: center; align-items: center; font-size: 24px; margin: 0 auto 14px auto; overflow: hidden; cursor: pointer; border: 2px dashed #94A3B8; }
         .img-upload img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Privacy Policy Content styling */
         .policy-content { padding: 20px; font-size: 14px; color: var(--text-main); line-height: 1.6; }
         .policy-content h3 { margin-top: 20px; margin-bottom: 8px; font-size: 16px; color: #1E3A8A; }
         .policy-content p, .policy-content ul { margin-bottom: 12px; color: #475569; }
@@ -167,7 +166,6 @@
                 <button type="button" id="tabLogin" onclick="switchAuthTab('login')">Existing Login</button>
             </div>
 
-            <!-- REGISTER -->
             <form id="registerForm" onsubmit="handleRegister(event)">
                 <div class="img-upload" onclick="document.getElementById('regLogoInput').click()" id="regLogoBox">
                     <i class="fas fa-camera"></i>
@@ -198,7 +196,6 @@
                 <button type="submit" class="btn-submit" id="btnRegisterSubmit"><i class="fas fa-check-circle"></i> Create Institute & Start</button>
             </form>
 
-            <!-- LOGIN -->
             <form id="loginForm" style="display:none;" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Registered Gmail Address *</label>
@@ -285,7 +282,7 @@
         <button class="fab" onclick="openFeeModal()"><i class="fas fa-plus-circle"></i> Record Fee</button>
     </div>
 
-    <!-- 3. SETTINGS SCREEN (PLAY STORE READY) -->
+    <!-- 3. SETTINGS SCREEN -->
     <div id="settingsScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -327,7 +324,6 @@
                 <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
             </div>
             
-            <!-- PLAY STORE MANDATORY LINKS -->
             <div class="section-heading">About & Legal</div>
             <div class="setting-item" onclick="switchScreen('privacyScreen')">
                 <div class="setting-icon" style="background: #F3E8FF; color: #7E22CE;"><i class="fas fa-shield-alt"></i></div>
@@ -344,7 +340,6 @@
                 </div>
             </div>
 
-            <!-- DANGER ZONE -->
             <div class="section-heading" style="color: var(--danger);">Account Setup</div>
             <div class="setting-item" onclick="handleLogout()" style="border-color: #FEE2E2;">
                 <div class="setting-icon" style="background: #FEE2E2; color: #DC2626;"><i class="fas fa-sign-out-alt"></i></div>
@@ -353,7 +348,6 @@
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Switch or disconnect account</p>
                 </div>
             </div>
-            <!-- Data Deletion (Play Store Mandatory) -->
             <div class="setting-item" onclick="deleteEntireAccount()" style="border-color: #FECACA; background: #FEF2F2;">
                 <div class="setting-icon" style="background: #DC2626; color: white;"><i class="fas fa-user-times"></i></div>
                 <div>
@@ -364,7 +358,7 @@
         </div>
     </div>
 
-    <!-- 4. PRIVACY POLICY SCREEN (NATIVE APP SCREEN) -->
+    <!-- 4. PRIVACY POLICY SCREEN -->
     <div id="privacyScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -541,11 +535,10 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
+    <!-- JAVASCRIPT FIXED FOR APK INTENTS & BACK BUTTON -->
     <script>
         const CLOUD_SYNC_URL = "https://script.google.com/macros/s/AKfycbwsxyIAV_bsbx2K2UKR9Dg3KPrFqIGcpF83xt02zII_AZeyXU77mOXpV8AO5_8pf1vvGA/exec";
 
-        // SAFE STORAGE HELPER (PREVENTS QUOTA ERRORS)
         function safeSetItem(key, value) {
             try {
                 localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
@@ -572,7 +565,6 @@
         let tempRegLogo = '';
         let tempEditLogo = '';
 
-        // IMAGE COMPRESSION (Ensures Tiny 10KB images instead of 5MB)
         function compressImage(file, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -813,34 +805,52 @@
             }
         }
 
+        // ==========================================
+        // 1. BACK BUTTON FIX (ऐप एग्जिट नहीं होगा, पहले होम पर आएगा)
+        // ==========================================
         function handleBackNavigation() {
             let activeModal = document.querySelector('.modal-overlay.active');
-            if (activeModal) { activeModal.classList.remove('active'); return true; }
-            if (document.getElementById('profileScreen').classList.contains('active') || 
-                document.getElementById('settingsScreen').classList.contains('active')) {
-                switchScreen('homeScreen'); return true;
+            if (activeModal) { 
+                activeModal.classList.remove('active'); 
+                return true; 
             }
             if (document.getElementById('privacyScreen').classList.contains('active')) {
-                switchScreen('settingsScreen'); return true;
+                switchScreen('settingsScreen'); 
+                return true;
+            }
+            if (document.getElementById('profileScreen').classList.contains('active') || 
+                document.getElementById('settingsScreen').classList.contains('active')) {
+                switchScreen('homeScreen'); 
+                return true;
             }
             if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं?")) {
-                if (navigator.app && navigator.app.exitApp) { navigator.app.exitApp(); }
-                else { window.history.back(); }
+                if (navigator.app && navigator.app.exitApp) { 
+                    navigator.app.exitApp(); 
+                } else { 
+                    window.history.back(); 
+                }
             } else {
                 window.history.pushState({ screen: 'home' }, '');
             }
             return false;
         }
 
-        window.addEventListener('popstate', handleBackNavigation);
-        document.addEventListener("backbutton", (e) => { e.preventDefault(); handleBackNavigation(); }, false);
+        window.addEventListener('popstate', function(e) { handleBackNavigation(); });
+        document.addEventListener("backbutton", function(e) { 
+            e.preventDefault(); 
+            handleBackNavigation(); 
+        }, false);
         window.history.pushState({ screen: 'home' }, '');
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
-            if (screenId === 'homeScreen') { curId = null; renderList(); }
-            else { window.history.pushState({ screen: screenId }, ''); }
+            if (screenId === 'homeScreen') { 
+                curId = null; 
+                renderList(); 
+            } else { 
+                window.history.pushState({ screen: screenId }, ''); 
+            }
         }
 
         function calcStats() {
@@ -916,8 +926,26 @@
             switchScreen('profileScreen');
         }
 
-        function makeCall() { if(activePhone) window.location.href = `tel:${activePhone}`; }
-        function sendWhatsApp() { if(activePhone) { window.open(`https://wa.me/91${activePhone.replace(/\D/g, '').slice(-10)}`, '_system'); } }
+        // ==========================================
+        // 2. CALL & WHATSAPP FIX FOR APK (WebView Supported)
+        // ==========================================
+        function makeCall() {
+            if (activePhone) {
+                window.location.href = "tel:" + activePhone;
+            } else {
+                alert("Phone number not available!");
+            }
+        }
+
+        function sendWhatsApp() {
+            if (activePhone) {
+                const cleanPhone = activePhone.replace(/\D/g, '').slice(-10);
+                // WebView और APK दोनों में व्हाट्सएप चैट खोलने का सबसे सुरक्षित तरीका
+                window.location.href = "https://wa.me/91" + cleanPhone;
+            } else {
+                alert("Phone number not available!");
+            }
+        }
 
         function renderFees() {
             const box = document.getElementById('paymentsList'); box.innerHTML = '';
