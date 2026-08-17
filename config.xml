@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.gsi.manager" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>GSI Manager</name>
-    <description>GSI Manager App</description>
+    <name>Fee Manager Pro</name>
+    <description>Fee Manager Pro</description>
     <access origin="*" />
     <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/icon.png" />
     <preference name="AndroidWindowSplashScreenBackground" value="#FFFFFF" />
