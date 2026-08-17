@@ -270,7 +270,6 @@
                 <div class="data-item" style="grid-column: span 2;"><label>Phone</label><span id="pPhone">-</span></div>
             </div>
 
-            <!-- FIXED CALL & MESSAGE BUTTONS WITH DIRECT INTENT -->
             <div class="action-grid">
                 <button id="btnCall" class="btn-action call" onclick="makeCall()"><i class="fas fa-phone-alt"></i> Call</button>
                 <button id="btnWa" class="btn-action wa" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Message</button>
@@ -317,7 +316,7 @@
                 </div>
             </div>
             <div class="setting-item" onclick="document.getElementById('importFile').click()">
-                <div class="setting-icon" style="background: #SECONDARY-LIGHT; color: var(--secondary);"><i class="fas fa-upload"></i></div>
+                <div class="setting-icon" style="background: var(--secondary-light); color: var(--secondary);"><i class="fas fa-upload"></i></div>
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Restore from File</h4>
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Load data from .json backup</p>
@@ -958,12 +957,13 @@
             switchScreen('profileScreen');
         }
 
-        // ==========================================
-        // 100% WORKING INTENT CALL & WHATSAPP FIX
-        // ==========================================
         function makeCall() {
             if (activePhone) {
-                window.location.href = "tel:" + activePhone;
+                const phoneNum = activePhone.replace(/\D/g, '');
+                window.location.href = "tel:" + phoneNum;
+                setTimeout(() => {
+                    window.open("tel:" + phoneNum, "_system");
+                }, 100);
             } else {
                 alert("Phone number not available!");
             }
@@ -972,21 +972,22 @@
         function sendWhatsApp() {
             if (activePhone) {
                 const cleanPhone = activePhone.replace(/\D/g, '').slice(-10);
-                window.location.href = "https://wa.me/91" + cleanPhone;
+                const waUrl = "https://wa.me/91" + cleanPhone;
+                window.location.href = waUrl;
+                setTimeout(() => {
+                    window.open(waUrl, "_system");
+                }, 100);
             } else {
                 alert("Phone number not available!");
             }
         }
 
-        // ==========================================
-        // SMART CUMULATIVE BALANCE CALCULATION (ADVANCE/DUE FIX)
-        // ==========================================
         function renderFees() {
             const box = document.getElementById('paymentsList'); box.innerHTML = '';
             const sp = payments.filter(p => p.sid === curId).sort((a, b) => new Date(a.pDate) - new Date(b.pDate));
             if(!sp.length) { box.innerHTML = `<p style="text-align:center; color:#94A3B8; padding:20px; font-size:13px;">No fees recorded</p>`; return; }
             
-            let runningBalance = 0; // पॉजिटिव मतलब एडवांस, नेगेटिव मतलब बकाया (Due)
+            let runningBalance = 0; 
             const processedList = [];
 
             sp.forEach(p => {
@@ -995,7 +996,6 @@
                 const netPayable = Math.max(0, base - disc);
                 const paid = parseFloat(p.amt || 0);
 
-                // इस ट्रांजैक्शन का शुद्ध अंतर: (दिया गया - लगना चाहिए था)
                 const diff = paid - netPayable;
                 runningBalance += diff;
 
@@ -1011,7 +1011,6 @@
                 processedList.push({ ...p, calculatedDue: itemDue, calculatedAdv: itemAdv });
             });
 
-            // उल्टे क्रम में दिखाएं (नया सबसे ऊपर)
             processedList.reverse().forEach(p => {
                 const [y, m] = p.m.split('-');
                 const mName = new Date(y, m-1).toLocaleString('en', {month:'short'});
@@ -1181,8 +1180,20 @@
             doc.setTextColor(71, 85, 105); doc.setFontSize(6.8); doc.setFont("helvetica", "bold");
             doc.text("Authorized Signatory", 78.5, footY + 2.5, { align: "center" });
 
+            // PDF फाइल का नाम छात्र के नाम और महीने के आधार पर आटोमैटिक सेट होगा
+            const cleanStudentName = s.n.replace(/[^a-zA-Z0-9]/g, '_');
+            const fileName = `${cleanStudentName}_${mName}_${y}_Receipt.pdf`;
+
             const pdfBlob = doc.output('blob');
-            window.open(URL.createObjectURL(pdfBlob), '_system');
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            
+            // डाउनलोड या व्यू करने के लिए आटोमैटिक लिंक ट्रिगर
+            const downloadLink = document.createElement('a');
+            downloadLink.href = pdfUrl;
+            downloadLink.download = fileName;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
         }
 
         function generateAutoStudentID() {
