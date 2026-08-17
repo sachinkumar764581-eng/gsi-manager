@@ -1,4 +1,4 @@
-name: Build GSI Manager APK
+name: Build Fee Manager Pro APK
 
 on:
   push:
