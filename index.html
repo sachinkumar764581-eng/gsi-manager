@@ -541,7 +541,7 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        const CLOUD_SYNC_URL = "https://script.google.com/macros/s/AKfycbwsxyIAV_bsbx2K2UKR9Dg3KPrFqIGcpF83xt02zII_AZeyXU77mOXpV8AO5_8pf1vvGA/exec";
+        const CLOUD_SYNC_URL = "https://script.google.com/macros/s/AKfycbxYvmhfCNqvCGG_Ho5SnXMjBtxtH6P_VwoS0ANH385ovWYFsO6P2_WzmBNV2tcYhkDC/exec";
 
         function safeSetItem(key, value) {
             try {
@@ -1180,14 +1180,12 @@
             doc.setTextColor(71, 85, 105); doc.setFontSize(6.8); doc.setFont("helvetica", "bold");
             doc.text("Authorized Signatory", 78.5, footY + 2.5, { align: "center" });
 
-            // PDF फाइल का नाम छात्र के नाम और महीने के आधार पर आटोमैटिक सेट होगा
             const cleanStudentName = s.n.replace(/[^a-zA-Z0-9]/g, '_');
             const fileName = `${cleanStudentName}_${mName}_${y}_Receipt.pdf`;
 
             const pdfBlob = doc.output('blob');
             const pdfUrl = URL.createObjectURL(pdfBlob);
             
-            // डाउनलोड या व्यू करने के लिए आटोमैटिक लिंक ट्रिगर
             const downloadLink = document.createElement('a');
             downloadLink.href = pdfUrl;
             downloadLink.download = fileName;
