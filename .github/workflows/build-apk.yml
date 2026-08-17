@@ -31,7 +31,7 @@ jobs:
 
       - name: Build Project
         run: |
-          cordova create gsi_app com.gsi.manager "GSI Manager"
+          cordova create gsi_app com.gsi.manager "Fee Manager Pro"
           cd gsi_app
           rm -rf www/*
           cp ../index.html www/index.html
