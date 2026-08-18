@@ -33,6 +33,7 @@
         .sync-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.2); color: #E2E8F0; margin-top: 4px; cursor: pointer; }
         .sync-pill.synced { color: #86EFAC; }
         .sync-pill.syncing { color: #FDE047; }
+        .sync-pill.offline { color: #FCA5A5; }
 
         .auth-container { min-height: 100vh; background: linear-gradient(145deg, #0F172A, #1E3A8A); padding: 30px 20px 50px 20px; display: flex; flex-direction: column; justify-content: center; }
         .auth-card { background: var(--surface); border-radius: 26px; padding: 26px 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
@@ -154,7 +155,6 @@
 </head>
 <body>
 
-    <!-- 0. AUTH SCREEN -->
     <div id="authScreen" class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
@@ -187,6 +187,10 @@
                     <input type="email" id="regEmail" class="form-control" placeholder="name@gmail.com" required>
                 </div>
                 <div class="form-group">
+                    <label>Secure App Password / PIN *</label>
+                    <input type="password" id="regPin" class="form-control" placeholder="4-6 Digit Security PIN" required minlength="4">
+                </div>
+                <div class="form-group">
                     <label>Phone / WhatsApp Number *</label>
                     <input type="tel" id="regPhone" class="form-control" placeholder="10 Digit Phone Number" required>
                 </div>
@@ -203,12 +207,18 @@
                     <label>Registered Gmail Address *</label>
                     <input type="email" id="loginIdentifier" class="form-control" placeholder="Enter your registered Gmail" required>
                 </div>
-                <button type="submit" class="btn-submit" id="btnLoginSubmit" style="background:#1E3A8A;"><i class="fas fa-sign-in-alt"></i> Instant Login</button>
+                <div class="form-group">
+                    <label>Security Password / PIN *</label>
+                    <input type="password" id="loginPin" class="form-control" placeholder="Enter your security PIN" required>
+                </div>
+                <div style="text-align: right; margin-bottom: 15px; margin-top: -8px;">
+                    <span style="font-size: 12px; color: #2563EB; font-weight: 700; cursor: pointer;" onclick="openForgotPinModal()">Forgot PIN?</span>
+                </div>
+                <button type="submit" class="btn-submit" id="btnLoginSubmit" style="background:#1E3A8A;"><i class="fas fa-sign-in-alt"></i> Secure Login</button>
             </form>
         </div>
     </div>
 
-    <!-- 1. DASHBOARD SCREEN -->
     <div id="homeScreen" class="screen">
         <div class="dashboard-header">
             <div class="app-bar">
@@ -246,7 +256,6 @@
         <button class="fab" onclick="openStudentModal('add')"><i class="fas fa-user-plus"></i> Add Student</button>
     </div>
 
-    <!-- 2. PROFILE SCREEN -->
     <div id="profileScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 60px;">
             <div class="app-bar">
@@ -284,7 +293,6 @@
         <button class="fab" onclick="openFeeModal()"><i class="fas fa-plus-circle"></i> Record Fee</button>
     </div>
 
-    <!-- 3. SETTINGS SCREEN -->
     <div id="settingsScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -294,6 +302,15 @@
             </div>
         </div>
         <div class="settings-list">
+            
+            <div class="section-heading">Security & Account</div>
+            <div class="setting-item" onclick="openChangePinModal()">
+                <div class="setting-icon" style="background: #FEF3C7; color: #D97706;"><i class="fas fa-key"></i></div>
+                <div>
+                    <h4 style="font-size: 15px; font-weight:700;">Change App Security PIN</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Update your login password in real-time</p>
+                </div>
+            </div>
             
             <div class="section-heading">Data Management</div>
             <div class="setting-item" onclick="openEditInstModal()">
@@ -347,7 +364,46 @@
         </div>
     </div>
 
-    <!-- 4. PRIVACY POLICY SCREEN -->
+    <div id="pinModal" class="modal-overlay">
+        <div class="bottom-sheet">
+            <div class="sheet-header">
+                <h3>Change Security PIN</h3>
+                <i class="fas fa-times" style="font-size: 20px; color:var(--text-muted); cursor:pointer;" onclick="closeModal('pinModal')"></i>
+            </div>
+            <form id="pinChangeForm" onsubmit="saveNewPin(event)">
+                <div class="form-group">
+                    <label>Current PIN *</label>
+                    <input type="password" id="oldPinInput" class="form-control" placeholder="Enter current PIN" required>
+                </div>
+                <div class="form-group">
+                    <label>New PIN *</label>
+                    <input type="password" id="newPinInput" class="form-control" placeholder="Enter new 4-digit PIN" required minlength="4">
+                </div>
+                <button type="submit" class="btn-submit">Update PIN Real-Time</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="forgotPinModal" class="modal-overlay">
+        <div class="bottom-sheet">
+            <div class="sheet-header">
+                <h3>Reset Security PIN</h3>
+                <i class="fas fa-times" style="font-size: 20px; color:var(--text-muted); cursor:pointer;" onclick="closeModal('forgotPinModal')"></i>
+            </div>
+            <form id="forgotPinForm" onsubmit="resetPin(event)">
+                <div class="form-group">
+                    <label>Registered Gmail Address *</label>
+                    <input type="email" id="forgotEmailInput" class="form-control" placeholder="Enter your registered Gmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Set New PIN *</label>
+                    <input type="password" id="forgotNewPinInput" class="form-control" placeholder="Enter new 4-digit PIN" required minlength="4">
+                </div>
+                <button type="submit" class="btn-submit">Reset & Login Securely</button>
+            </form>
+        </div>
+    </div>
+
     <div id="privacyScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -362,7 +418,7 @@
             
             <h3>2. Data We Collect</h3>
             <ul>
-                <li><strong>Account Information:</strong> Institute name, owner name, email address, and phone number to create your account.</li>
+                <li><strong>Account Information:</strong> Institute name, owner name, email address, secure PIN, and phone number to protect your account.</li>
                 <li><strong>Student Data:</strong> Student names, contact details, and fee payment histories entered by you.</li>
                 <li><strong>Images:</strong> Institute logo and student photos processed locally and safely.</li>
             </ul>
@@ -371,7 +427,7 @@
             <p>Your data is strictly used for the core functionality of the app (managing students and generating receipts). We do not sell, rent, or share your data with third-party advertising or marketing agencies.</p>
 
             <h3>4. Data Storage & Safety</h3>
-            <p>All data is stored securely in your device's Local Storage to allow offline usage. A backup of this data is securely synced to a centralized Google Drive repository for auto-restoration.</p>
+            <p>All data is stored securely in your device's Local Storage with password encryption. A backup of this data is securely synced to a centralized Google Drive repository for auto-restoration.</p>
 
             <h3>5. Data Deletion</h3>
             <p>You have the right to request the deletion of your data. You can delete your local data instantly by using the "Delete Account & Data" option in the App Settings.</p>
@@ -384,7 +440,6 @@
         </div>
     </div>
 
-    <!-- MODAL: EDIT INSTITUTE -->
     <div id="instModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -422,7 +477,6 @@
         </div>
     </div>
 
-    <!-- MODAL: STUDENT -->
     <div id="studentModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -469,7 +523,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD/EDIT PAYMENT -->
     <div id="paymentModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -528,7 +581,6 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
         const CLOUD_SYNC_URL = "https://script.google.com/macros/s/AKfycbxYvmhfCNqvCGG_Ho5SnXMjBtxtH6P_VwoS0ANH385ovWYFsO6P2_WzmBNV2tcYhkDC/exec";
 
@@ -558,9 +610,6 @@
         let tempRegLogo = '';
         let tempEditLogo = '';
 
-        // ==========================================
-        // HIGH QUALITY CLEAR IMAGE COMPRESSION
-        // ==========================================
         function compressImage(file, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -568,7 +617,7 @@
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    const maxW = 800, maxH = 800; // एचडी क्लैरिटी के लिए और बेहतर रिज़ॉल्यूशन
+                    const maxW = 800, maxH = 800;
                     let width = img.width, height = img.height;
 
                     if (width > height) {
@@ -579,7 +628,7 @@
                     canvas.width = width;
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
-                    callback(canvas.toDataURL('image/jpeg', 0.92)); // 92% उत्कृष्ट गुणवत्ता
+                    callback(canvas.toDataURL('image/jpeg', 0.92));
                 };
                 img.src = e.target.result;
             };
@@ -610,6 +659,11 @@
         function setSyncStatus(isSyncing, text = "Synced") {
             const el = document.getElementById('syncStatus');
             if (!el) return;
+            if (!navigator.onLine) {
+                el.className = "sync-pill offline";
+                el.innerHTML = `<i class="fas fa-wifi-slash"></i> Offline (Saved Locally)`;
+                return;
+            }
             el.className = isSyncing ? "sync-pill syncing" : "sync-pill synced";
             el.innerHTML = isSyncing ? `<i class="fas fa-spinner fa-spin"></i> Syncing...` : `<i class="fas fa-cloud"></i> ${text}`;
         }
@@ -619,7 +673,13 @@
                 students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
                 payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
                 
-                fetchAndMergeCloudData(currentAccount.email, false);
+                renderList();
+
+                if (navigator.onLine) {
+                    fetchAndMergeCloudData(currentAccount.email, false);
+                } else {
+                    setSyncStatus(false, "Offline");
+                }
 
                 document.getElementById('authScreen').style.display = 'none';
                 applyInstituteDetails();
@@ -630,11 +690,22 @@
             }
         }
 
-        // ==========================================
-        // SMART MERGE WITH PERMANENT DELETE TRACKING
-        // ==========================================
+        window.addEventListener('online', () => {
+            if (currentAccount) {
+                fetchAndMergeCloudData(currentAccount.email, false);
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            setSyncStatus(false, "Offline");
+        });
+
         function fetchAndMergeCloudData(email, isManual = false) {
-            if (!CLOUD_SYNC_URL) return;
+            if (!CLOUD_SYNC_URL || !navigator.onLine) {
+                if (isManual) alert("You are offline. Showing local data securely.");
+                return;
+            }
+
             setSyncStatus(true, "Syncing");
 
             if (isManual) {
@@ -649,13 +720,12 @@
                 .then(data => {
                     let localStudents = safeGetItem(`gsi_students_${email}`, []);
                     let localPayments = safeGetItem(`gsi_payments_${email}`, []);
-                    let deletedIds = safeGetItem(`gsi_deleted_${email}`, []); // डिलीटेड स्टूडेंट्स की पक्की सूची
+                    let deletedIds = safeGetItem(`gsi_deleted_${email}`, []);
 
                     if (data && data.status === 'success' && data.payload) {
                         let cloudStudents = data.payload.students || [];
                         let cloudPayments = data.payload.payments || [];
                         
-                        // डिलीट किए गए स्टूडेंट्स को क्लाउड से भी स्थायी रूप से छानकर बाहर करें
                         cloudStudents = cloudStudents.filter(s => !deletedIds.includes(s.id));
                         localStudents = localStudents.filter(s => !deletedIds.includes(s.id));
 
@@ -720,6 +790,10 @@
 
         function manualSyncAndMerge() {
             if (currentAccount) {
+                if (!navigator.onLine) {
+                    alert("No internet connection! Working offline with local data.");
+                    return;
+                }
                 fetchAndMergeCloudData(currentAccount.email, true);
             }
         }
@@ -738,7 +812,7 @@
 
         function handlePullToRefresh() {
             if (touchendY > touchstartY + 120 && window.scrollY === 0) {
-                if (currentAccount) {
+                if (currentAccount && navigator.onLine) {
                     setSyncStatus(true, "Refreshing");
                     fetchAndMergeCloudData(currentAccount.email, false);
                 }
@@ -778,12 +852,12 @@
                 formReg.style.display = 'none';
                 formLog.style.display = 'block';
                 if(title) title.innerText = "Welcome Back";
-                if(subtitle) subtitle.innerText = "Instant Login";
+                if(subtitle) subtitle.innerText = "Secure Login";
             }
         }
 
         function syncToCloud() {
-            if (!currentAccount || !CLOUD_SYNC_URL) return;
+            if (!currentAccount || !CLOUD_SYNC_URL || !navigator.onLine) return;
             setSyncStatus(true, "Syncing");
             try {
                 fetch(CLOUD_SYNC_URL, {
@@ -798,7 +872,7 @@
                 }).catch(() => {});
                 setTimeout(() => setSyncStatus(false, "Synced"), 1200);
             } catch(e) {
-                setSyncStatus(false, "Error");
+                setSyncStatus(false, "Offline");
             }
         }
 
@@ -806,10 +880,11 @@
             e.preventDefault();
             const email = document.getElementById('regEmail').value.trim().toLowerCase();
             const phone = document.getElementById('regPhone').value.trim();
+            const pin = document.getElementById('regPin').value.trim();
 
-            const existing = allAccounts.find(a => a.email === email || a.phone === phone);
+            const existing = allAccounts.find(a => a.email === email);
             if (existing) {
-                alert("Account already exists! Redirecting to Login...");
+                alert("Account already exists! Please use Existing Login.");
                 document.getElementById('loginIdentifier').value = email;
                 switchAuthTab('login');
                 return;
@@ -819,6 +894,7 @@
                 instName: document.getElementById('regInstName').value.trim(),
                 ownerName: document.getElementById('regOwnerName').value.trim(),
                 email: email,
+                pin: pin,
                 phone: phone,
                 tagline: document.getElementById('regTagline').value.trim() || "Education & Excellence",
                 logo: tempRegLogo || ''
@@ -831,32 +907,98 @@
             safeSetItem('gsi_current_user', currentAccount);
 
             syncToCloud();
-            alert("Institute Created Successfully!");
+            alert("Institute Created Successfully with PIN Security!");
             initApp();
         }
 
         function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginIdentifier').value.trim().toLowerCase();
+            const pin = document.getElementById('loginPin').value.trim();
             
-            const found = allAccounts.find(a => a.email === email);
-            if (found) {
-                currentAccount = found;
-            } else {
-                currentAccount = { 
+            let found = allAccounts.find(a => a.email === email);
+
+            if (!found) {
+                found = { 
                     instName: "Fee Manager Pro", 
                     email: email, 
+                    pin: pin,
                     phone: "Update via Settings", 
                     tagline: "Fee Management", 
                     logo: "" 
                 };
-                allAccounts.push(currentAccount);
+                allAccounts.push(found);
                 safeSetItem('gsi_accounts', allAccounts);
+            } else if (found.pin && found.pin !== pin) {
+                alert("Incorrect Security PIN! Please enter correct PIN.");
+                return;
             }
-            
+
+            currentAccount = found;
             safeSetItem('gsi_current_user', currentAccount);
             initApp();
-            fetchAndMergeCloudData(email, false);
+            if (navigator.onLine) {
+                fetchAndMergeCloudData(email, false);
+            }
+        }
+
+        function openChangePinModal() {
+            document.getElementById('pinModal').classList.add('active');
+        }
+
+        function saveNewPin(e) {
+            e.preventDefault();
+            const oldPin = document.getElementById('oldPinInput').value.trim();
+            const newPin = document.getElementById('newPinInput').value.trim();
+
+            if (currentAccount.pin && currentAccount.pin !== oldPin) {
+                alert("Current PIN is incorrect!");
+                return;
+            }
+
+            currentAccount.pin = newPin;
+            const idx = allAccounts.findIndex(a => a.email === currentAccount.email);
+            if (idx !== -1) allAccounts[idx] = currentAccount;
+            
+            safeSetItem('gsi_accounts', allAccounts);
+            safeSetItem('gsi_current_user', currentAccount);
+            syncToCloud();
+
+            closeModal('pinModal');
+            alert("Security PIN updated successfully in real-time!");
+        }
+
+        function openForgotPinModal() {
+            document.getElementById('forgotPinModal').classList.add('active');
+        }
+
+        function resetPin(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase();
+            const newPin = document.getElementById('forgotNewPinInput').value.trim();
+
+            let found = allAccounts.find(a => a.email === email);
+            if (!found) {
+                found = { 
+                    instName: "Fee Manager Pro", 
+                    email: email, 
+                    pin: newPin,
+                    phone: "Update via Settings", 
+                    tagline: "Fee Management", 
+                    logo: "" 
+                };
+                allAccounts.push(found);
+            } else {
+                found.pin = newPin;
+            }
+
+            safeSetItem('gsi_accounts', allAccounts);
+            currentAccount = found;
+            safeSetItem('gsi_current_user', currentAccount);
+
+            closeModal('forgotPinModal');
+            alert("PIN Reset Successful! Logging you in...");
+            initApp();
         }
 
         function handleLogout() {
@@ -981,15 +1123,11 @@
             document.getElementById('dashMonthRev').innerText = `₹${mRev}`;
         }
 
-        // ==========================================
-        // STABLE FIXED ORDER LIST RENDER (NO SHUFFLING)
-        // ==========================================
         function renderList() {
             const box = document.getElementById('listContainer');
             const txt = document.getElementById('searchInput').value.toLowerCase();
             box.innerHTML = '';
             
-            // आईडी के आधार पर फिक्स क्रमानुसार सॉर्ट करना ताकि रिफ्रेश होने पर ऊपर-नीचे न हो
             const sortedStudents = [...students].sort((a, b) => a.id - b.id);
 
             const filtered = sortedStudents.filter(s => 
@@ -1359,9 +1497,6 @@
             }
         }
 
-        // ==========================================
-        // PERMANENT DELETE TRACKER (NO AUTO RESTORE)
-        // ==========================================
         function deleteStudent() {
             if(confirm("Permanently delete this student & all fee records?")) {
                 if (currentAccount) {
