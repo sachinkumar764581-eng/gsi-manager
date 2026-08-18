@@ -46,8 +46,8 @@
         .auth-toggle button { flex: 1; padding: 12px; border: none; background: transparent; font-weight: 700; font-size: 13px; color: var(--text-muted); border-radius: 11px; cursor: pointer; transition: 0.2s; min-height: 48px; }
         .auth-toggle button.active { background: var(--surface); color: #2563EB; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         
-        .dashboard-header { background: linear-gradient(135deg, #1E3A8A, #2563EB); padding: 24px 20px 44px 20px; border-radius: 0 0 28px 28px; color: white; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.18); }
-        .app-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .dashboard-header { background: linear-gradient(135deg, #1E3A8A, #2563EB); padding: 24px 20px 20px 20px; border-radius: 0 0 28px 28px; color: white; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.18); }
+        .app-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .app-bar .brand { display: flex; align-items: center; gap: 12px; max-width: 80%; }
         .app-bar .logo-icon { background: white; color: #2563EB; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; flex-shrink: 0; }
         .app-bar .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
@@ -55,7 +55,13 @@
         .app-bar p { font-size: 11px; opacity: 0.88; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .settings-icon { font-size: 22px; cursor: pointer; padding: 10px; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* BATCH FILTER CHIPS */
+        .filter-row { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 4px 0; scrollbar-width: none; }
+        .filter-row::-webkit-scrollbar { display: none; }
+        .filter-chip { background: rgba(255,255,255,0.18); padding: 6px 14px; border-radius: 16px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.15); transition: 0.2s; }
+        .filter-chip.active { background: white; color: #1E3A8A; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
         .stat-card { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); padding: 14px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18); }
         .stat-card.full-width { grid-column: span 2; background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.06)); }
         .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; opacity: 0.92; }
@@ -66,7 +72,7 @@
         .screen.active { display: block; animation: fadeIn 0.22s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .main-container { padding: 0 18px; margin-top: -18px; position: relative; z-index: 2; }
+        .main-container { padding: 0 18px; margin-top: -14px; position: relative; z-index: 2; }
         .search-box { width: 100%; min-height: 48px; padding: 14px 16px 14px 44px; border: 1px solid #E2E8F0; border-radius: 16px; font-size: 14px; background: var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="15" fill="%2394A3B8"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>') no-repeat 16px center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); outline: none; margin-bottom: 16px; font-weight: 500; }
         
         .student-card { background: var(--surface); padding: 15px 16px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); cursor: pointer; border: 1px solid #E2E8F0; min-height: 72px; }
@@ -155,6 +161,7 @@
 </head>
 <body>
 
+    <!-- 0. AUTH SCREEN -->
     <div id="authScreen" class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
@@ -219,6 +226,7 @@
         </div>
     </div>
 
+    <!-- 1. DASHBOARD SCREEN -->
     <div id="homeScreen" class="screen">
         <div class="dashboard-header">
             <div class="app-bar">
@@ -232,6 +240,10 @@
                 </div>
                 <i class="fas fa-cog settings-icon" onclick="switchScreen('settingsScreen')"></i>
             </div>
+            
+            <!-- BATCH FILTER CHIPS (NEW FEATURE) -->
+            <div class="filter-row" id="batchFiltersContainer"></div>
+
             <div class="stats-grid">
                 <div class="stat-card full-width">
                     <div class="stat-header"><p>Total Revenue</p><i class="fas fa-chart-bar"></i></div>
@@ -248,7 +260,7 @@
             </div>
         </div>
 
-        <div class="main-container">
+        <div class="main-container" style="margin-top: 14px;">
             <input type="text" id="searchInput" class="search-box" placeholder="Search student by name or ID..." onkeyup="renderList()">
             <div id="listContainer"></div>
         </div>
@@ -256,6 +268,7 @@
         <button class="fab" onclick="openStudentModal('add')"><i class="fas fa-user-plus"></i> Add Student</button>
     </div>
 
+    <!-- 2. PROFILE SCREEN -->
     <div id="profileScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 60px;">
             <div class="app-bar">
@@ -293,6 +306,7 @@
         <button class="fab" onclick="openFeeModal()"><i class="fas fa-plus-circle"></i> Record Fee</button>
     </div>
 
+    <!-- 3. SETTINGS SCREEN -->
     <div id="settingsScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -318,6 +332,15 @@
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Institute Profile</h4>
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;" id="profileSubText">Change name, tagline & owner email</p>
+                </div>
+            </div>
+
+            <!-- EXCEL EXPORT BUTTON (NEW ADVANCED FEATURE) -->
+            <div class="setting-item" onclick="exportToCSV()">
+                <div class="setting-icon" style="background: #FEF3C7; color: #B45309;"><i class="fas fa-file-excel"></i></div>
+                <div>
+                    <h4 style="font-size: 15px; font-weight:700;">Export to Excel (CSV)</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Download all student records for Excel</p>
                 </div>
             </div>
             
@@ -364,6 +387,7 @@
         </div>
     </div>
 
+    <!-- MODAL: CHANGE PIN -->
     <div id="pinModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -384,6 +408,7 @@
         </div>
     </div>
 
+    <!-- MODAL: FORGOT PIN -->
     <div id="forgotPinModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -404,6 +429,7 @@
         </div>
     </div>
 
+    <!-- 4. PRIVACY POLICY SCREEN -->
     <div id="privacyScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -440,6 +466,7 @@
         </div>
     </div>
 
+    <!-- MODAL: EDIT INSTITUTE -->
     <div id="instModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -477,6 +504,7 @@
         </div>
     </div>
 
+    <!-- MODAL: STUDENT -->
     <div id="studentModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -523,6 +551,7 @@
         </div>
     </div>
 
+    <!-- MODAL: ADD/EDIT PAYMENT -->
     <div id="paymentModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -581,6 +610,7 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT -->
     <script>
         const CLOUD_SYNC_URL = "https://script.google.com/macros/s/AKfycbxYvmhfCNqvCGG_Ho5SnXMjBtxtH6P_VwoS0ANH385ovWYFsO6P2_WzmBNV2tcYhkDC/exec";
 
@@ -609,6 +639,7 @@
         let activePhone = '';
         let tempRegLogo = '';
         let tempEditLogo = '';
+        let activeBatchFilter = "All"; // न्यू फीचर: बैच फिल्टर स्टेट
 
         function compressImage(file, callback) {
             const reader = new FileReader();
@@ -673,6 +704,7 @@
                 students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
                 payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
                 
+                renderFilters();
                 renderList();
 
                 if (navigator.onLine) {
@@ -748,6 +780,7 @@
                             applyInstituteDetails();
                         }
 
+                        renderFilters();
                         renderList();
                         syncToCloud(); 
                     } else {
@@ -1106,6 +1139,7 @@
             document.getElementById(screenId).classList.add('active');
             if (screenId === 'homeScreen') { 
                 curId = null; 
+                renderFilters();
                 renderList(); 
             }
         }
@@ -1123,12 +1157,64 @@
             document.getElementById('dashMonthRev').innerText = `₹${mRev}`;
         }
 
+        // ==========================================
+        // NEW FEATURE: BATCH FILTER RENDERING
+        // ==========================================
+        function renderFilters() {
+            const container = document.getElementById('batchFiltersContainer');
+            if (!container) return;
+
+            const uniqueBatches = ["All", ...new Set(students.map(s => s.b).filter(Boolean))];
+            
+            container.innerHTML = uniqueBatches.map(batch => `
+                <div class="filter-chip ${activeBatchFilter === batch ? 'active' : ''}" onclick="setBatchFilter('${batch}')">
+                    ${batch}
+                </div>
+            `).join('');
+        }
+
+        function setBatchFilter(batch) {
+            activeBatchFilter = batch;
+            renderFilters();
+            renderList();
+        }
+
+        // ==========================================
+        // NEW FEATURE: EXCEL (CSV) EXPORT FUNCTION
+        // ==========================================
+        function exportToCSV() {
+            if (!students.length) {
+                alert("No student data available to export!");
+                return;
+            }
+            let csv = "Student ID,Student Name,Father Name,Batch,Phone,Monthly Fee,Admission Date\n";
+            students.forEach(s => {
+                csv += `"${s.code || ''}","${s.n || ''}","${s.fn || ''}","${s.b || ''}","${s.ph || ''}","${s.fee || 0}","${s.ad || ''}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentAccount.instName.replace(/\s+/g, '_')}_Students_Data.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            alert("Excel (CSV) Backup Downloaded Successfully!");
+        }
+
         function renderList() {
             const box = document.getElementById('listContainer');
             const txt = document.getElementById('searchInput').value.toLowerCase();
             box.innerHTML = '';
             
-            const sortedStudents = [...students].sort((a, b) => a.id - b.id);
+            // फिक्स क्रमानुसार सॉर्ट करना
+            let sortedStudents = [...students].sort((a, b) => a.id - b.id);
+
+            // बैच फिल्टर अप्लाई करना
+            if (activeBatchFilter !== "All") {
+                sortedStudents = sortedStudents.filter(s => s.b === activeBatchFilter);
+            }
 
             const filtered = sortedStudents.filter(s => 
                 s.n.toLowerCase().includes(txt) || (s.code && s.code.toLowerCase().includes(txt))
@@ -1303,13 +1389,23 @@
             }
         }
 
+        // ==========================================
+        // PROFESSIONAL FULL-FEATURED PDF RECEIPT GENERATOR
+        // ==========================================
         function generateFastPDFReceipt(paymentId) {
             const p = payments.find(x => x.id === paymentId);
+            if (!p) return;
             const s = students.find(x => x.id === p.sid);
+            if (!s) return;
             const [y, m] = p.m.split('-');
             const mName = new Date(y, m-1).toLocaleString('en', {month:'long'});
 
             const { jsPDF } = window.jspdf;
+            if (!jsPDF) {
+                alert("PDF Library not loaded yet, please try again.");
+                return;
+            }
+
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [100, 150] });
 
             doc.setFillColor(30, 58, 138);
