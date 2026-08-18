@@ -163,7 +163,6 @@
                 <p id="authSubtitle">Set up your coaching in 1 minute</p>
             </div>
 
-            <!-- FIXED AUTH TOGGLE BUTTONS -->
             <div class="auth-toggle">
                 <button type="button" id="tabRegister" class="active" onclick="switchAuthTab('register')">New Register</button>
                 <button type="button" id="tabLogin" onclick="switchAuthTab('login')">Existing Login</button>
@@ -569,7 +568,7 @@
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    const maxW = 600, maxH = 600; // बेहतर क्लैरिटी के लिए रिज़ॉल्यूशन बढ़ाया गया
+                    const maxW = 800, maxH = 800; // एचडी क्लैरिटी के लिए और बेहतर रिज़ॉल्यूशन
                     let width = img.width, height = img.height;
 
                     if (width > height) {
@@ -580,7 +579,7 @@
                     canvas.width = width;
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
-                    callback(canvas.toDataURL('image/jpeg', 0.9)); // 90% हाई क्वालिटी
+                    callback(canvas.toDataURL('image/jpeg', 0.92)); // 92% उत्कृष्ट गुणवत्ता
                 };
                 img.src = e.target.result;
             };
@@ -632,7 +631,7 @@
         }
 
         // ==========================================
-        // SILENT MERGE & IN-LINE ANIMATION FEEDBACK
+        // SMART MERGE WITH PERMANENT DELETE TRACKING
         // ==========================================
         function fetchAndMergeCloudData(email, isManual = false) {
             if (!CLOUD_SYNC_URL) return;
@@ -650,17 +649,15 @@
                 .then(data => {
                     let localStudents = safeGetItem(`gsi_students_${email}`, []);
                     let localPayments = safeGetItem(`gsi_payments_${email}`, []);
+                    let deletedIds = safeGetItem(`gsi_deleted_${email}`, []); // डिलीटेड स्टूडेंट्स की पक्की सूची
 
                     if (data && data.status === 'success' && data.payload) {
                         let cloudStudents = data.payload.students || [];
                         let cloudPayments = data.payload.payments || [];
                         
-                        if (cloudStudents.length === 0 && localStudents.length > 0) {
-                            syncToCloud();
-                            setSyncStatus(false, "Synced");
-                            if (isManual) showInlineSyncSuccess();
-                            return;
-                        }
+                        // डिलीट किए गए स्टूडेंट्स को क्लाउड से भी स्थायी रूप से छानकर बाहर करें
+                        cloudStudents = cloudStudents.filter(s => !deletedIds.includes(s.id));
+                        localStudents = localStudents.filter(s => !deletedIds.includes(s.id));
 
                         let studentMap = new Map();
                         cloudStudents.forEach(s => studentMap.set(s.id, s));
@@ -758,9 +755,6 @@
             logoContainer.innerHTML = currentAccount.logo ? `<img src="${currentAccount.logo}">` : `<i class="fas fa-graduation-cap"></i>`;
         }
 
-        // ==========================================
-        // FIXED AUTH TAB SWITCHING (REGISTER / LOGIN)
-        // ==========================================
         function switchAuthTab(tab) {
             const tabReg = document.getElementById('tabRegister');
             const tabLog = document.getElementById('tabLogin');
@@ -879,6 +873,7 @@
                     if(currentAccount) {
                         localStorage.removeItem(`gsi_students_${currentAccount.email}`);
                         localStorage.removeItem(`gsi_payments_${currentAccount.email}`);
+                        localStorage.removeItem(`gsi_deleted_${currentAccount.email}`);
                         allAccounts = allAccounts.filter(a => a.email !== currentAccount.email);
                         safeSetItem('gsi_accounts', allAccounts);
                     }
@@ -986,12 +981,18 @@
             document.getElementById('dashMonthRev').innerText = `₹${mRev}`;
         }
 
+        // ==========================================
+        // STABLE FIXED ORDER LIST RENDER (NO SHUFFLING)
+        // ==========================================
         function renderList() {
             const box = document.getElementById('listContainer');
             const txt = document.getElementById('searchInput').value.toLowerCase();
             box.innerHTML = '';
             
-            const filtered = students.filter(s => 
+            // आईडी के आधार पर फिक्स क्रमानुसार सॉर्ट करना ताकि रिफ्रेश होने पर ऊपर-नीचे न हो
+            const sortedStudents = [...students].sort((a, b) => a.id - b.id);
+
+            const filtered = sortedStudents.filter(s => 
                 s.n.toLowerCase().includes(txt) || (s.code && s.code.toLowerCase().includes(txt))
             );
 
@@ -1358,8 +1359,18 @@
             }
         }
 
+        // ==========================================
+        // PERMANENT DELETE TRACKER (NO AUTO RESTORE)
+        // ==========================================
         function deleteStudent() {
             if(confirm("Permanently delete this student & all fee records?")) {
+                if (currentAccount) {
+                    let deletedIds = safeGetItem(`gsi_deleted_${currentAccount.email}`, []);
+                    if (!deletedIds.includes(curId)) {
+                        deletedIds.push(curId);
+                        safeSetItem(`gsi_deleted_${currentAccount.email}`, deletedIds);
+                    }
+                }
                 students = students.filter(s => s.id !== curId);
                 payments = payments.filter(p => p.sid !== curId);
                 persistData();
