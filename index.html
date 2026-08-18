@@ -97,7 +97,6 @@
         .setting-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0; }
         .section-heading { font-size: 14px; color: var(--text-muted); font-weight: 800; padding: 0 18px; margin: 24px 0 10px 0; text-transform: uppercase; letter-spacing: 0.8px; }
         
-        /* IN-LINE SYNC ANIMATION BADGE */
         .sync-inline-msg { font-size: 11px; font-weight: 700; color: var(--secondary); display: none; margin-top: 2px; }
         
         .payment-list { padding: 0 18px; }
@@ -164,6 +163,7 @@
                 <p id="authSubtitle">Set up your coaching in 1 minute</p>
             </div>
 
+            <!-- FIXED AUTH TOGGLE BUTTONS -->
             <div class="auth-toggle">
                 <button type="button" id="tabRegister" class="active" onclick="switchAuthTab('register')">New Register</button>
                 <button type="button" id="tabLogin" onclick="switchAuthTab('login')">Existing Login</button>
@@ -305,7 +305,6 @@
                 </div>
             </div>
             
-            <!-- SYNC & RESTORE BUTTON WITH IN-LINE ANIMATION FEEDBACK -->
             <div class="setting-item" onclick="manualSyncAndMerge()" id="syncSettingCard">
                 <div class="setting-icon" style="background: #D1FAE5; color: #059669;"><i class="fas fa-cloud-upload-alt" id="syncIcon"></i></div>
                 <div>
@@ -561,7 +560,7 @@
         let tempEditLogo = '';
 
         // ==========================================
-        // IMPROVED IMAGE QUALITY (MEDIUM/HD & CLEAR)
+        // HIGH QUALITY CLEAR IMAGE COMPRESSION
         // ==========================================
         function compressImage(file, callback) {
             const reader = new FileReader();
@@ -570,7 +569,7 @@
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    const maxW = 400, maxH = 400; // बढ़ाई गई साइज़ ताकि फोटो साफ और स्पष्ट दिखे
+                    const maxW = 600, maxH = 600; // बेहतर क्लैरिटी के लिए रिज़ॉल्यूशन बढ़ाया गया
                     let width = img.width, height = img.height;
 
                     if (width > height) {
@@ -581,7 +580,7 @@
                     canvas.width = width;
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
-                    callback(canvas.toDataURL('image/jpeg', 0.85)); // 85% उच्च गुणवत्ता
+                    callback(canvas.toDataURL('image/jpeg', 0.9)); // 90% हाई क्वालिटी
                 };
                 img.src = e.target.result;
             };
@@ -640,8 +639,10 @@
             setSyncStatus(true, "Syncing");
 
             if (isManual) {
-                document.getElementById('syncIcon').className = "fas fa-spinner fa-spin";
-                document.getElementById('syncDescTextinnerText = "Syncing with cloud...";
+                const icon = document.getElementById('syncIcon');
+                const desc = document.getElementById('syncDescText');
+                if(icon) icon.className = "fas fa-spinner fa-spin";
+                if(desc) desc.innerText = "Syncing with cloud...";
             }
             
             fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
@@ -693,8 +694,10 @@
                 .catch(() => {
                     setSyncStatus(false, "Offline");
                     if (isManual) {
-                        document.getElementById('syncIcon').className = "fas fa-cloud-upload-alt";
-                        document.getElementById('syncDescText').innerText = "Offline mode active";
+                        const icon = document.getElementById('syncIcon');
+                        const desc = document.getElementById('syncDescText');
+                        if(icon) icon.className = "fas fa-cloud-upload-alt";
+                        if(desc) desc.innerText = "Offline mode active";
                     }
                 });
         }
@@ -704,6 +707,8 @@
             const desc = document.getElementById('syncDescText');
             const msg = document.getElementById('syncInlineMsg');
             
+            if(!icon || !desc || !msg) return;
+
             icon.className = "fas fa-check-circle";
             desc.style.display = "none";
             msg.style.display = "block";
@@ -753,21 +758,33 @@
             logoContainer.innerHTML = currentAccount.logo ? `<img src="${currentAccount.logo}">` : `<i class="fas fa-graduation-cap"></i>`;
         }
 
+        // ==========================================
+        // FIXED AUTH TAB SWITCHING (REGISTER / LOGIN)
+        // ==========================================
         function switchAuthTab(tab) {
+            const tabReg = document.getElementById('tabRegister');
+            const tabLog = document.getElementById('tabLogin');
+            const formReg = document.getElementById('registerForm');
+            const formLog = document.getElementById('loginForm');
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+
+            if (!tabReg || !tabLog || !formReg || !formLog) return;
+
             if (tab === 'register') {
-                document.getElementById('tabRegister').classList.add('active');
-                document.getElementById('tabLogin').classList.remove('active');
-                document.getElementById('registerForm').style.display = 'block';
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('authTitle').innerText = "Fee Manager Pro";
-                document.getElementById('authSubtitle').innerText = "Set up your coaching in 1 minute";
+                tabReg.classList.add('active');
+                tabLog.classList.remove('active');
+                formReg.style.display = 'block';
+                formLog.style.display = 'none';
+                if(title) title.innerText = "Fee Manager Pro";
+                if(subtitle) subtitle.innerText = "Set up your coaching in 1 minute";
             } else {
-                document.getElementById('tabLogin').classList.add('active');
-                document.getElementById('tabRegister').classList.remove('active');
-                document.getElementById('registerForm').style.display = 'none';
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('authTitle').innerText = "Welcome Back";
-                document.getElementById('authSubtitle').innerText = "Instant Login";
+                tabLog.classList.add('active');
+                tabReg.classList.remove('active');
+                formReg.style.display = 'none';
+                formLog.style.display = 'block';
+                if(title) title.innerText = "Welcome Back";
+                if(subtitle) subtitle.innerText = "Instant Login";
             }
         }
 
