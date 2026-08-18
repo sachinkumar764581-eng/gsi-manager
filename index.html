@@ -93,9 +93,12 @@
         .btn-action.wa { background: var(--secondary-light); color: #047857; }
 
         .settings-list { padding: 18px; }
-        .setting-item { background: white; padding: 16px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.02); border: 1px solid #E2E8F0; min-height: 72px; }
+        .setting-item { background: white; padding: 16px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.02); border: 1px solid #E2E8F0; min-height: 72px; position: relative; }
         .setting-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0; }
         .section-heading { font-size: 14px; color: var(--text-muted); font-weight: 800; padding: 0 18px; margin: 24px 0 10px 0; text-transform: uppercase; letter-spacing: 0.8px; }
+        
+        /* IN-LINE SYNC ANIMATION BADGE */
+        .sync-inline-msg { font-size: 11px; font-weight: 700; color: var(--secondary); display: none; margin-top: 2px; }
         
         .payment-list { padding: 0 18px; }
         .payment-card { background: var(--surface); padding: 16px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #E2E8F0; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 12px; }
@@ -215,7 +218,7 @@
                     <div>
                         <h2 id="dashInstName">Fee Manager Pro</h2>
                         <p id="dashInstTag">Fee Management</p>
-                        <div class="sync-pill synced" id="syncStatus" onclick="manualSyncAndMerge()"><i class="fas fa-cloud"></i> Ready (Sync)</div>
+                        <div class="sync-pill synced" id="syncStatus" onclick="manualSyncAndMerge()"><i class="fas fa-cloud"></i> Synced</div>
                     </div>
                 </div>
                 <i class="fas fa-cog settings-icon" onclick="switchScreen('settingsScreen')"></i>
@@ -282,7 +285,7 @@
         <button class="fab" onclick="openFeeModal()"><i class="fas fa-plus-circle"></i> Record Fee</button>
     </div>
 
-    <!-- 3. SETTINGS SCREEN (CLEANED UP: EXTRA BACKUP BUTTONS REMOVED) -->
+    <!-- 3. SETTINGS SCREEN -->
     <div id="settingsScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -301,11 +304,14 @@
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;" id="profileSubText">Change name, tagline & owner email</p>
                 </div>
             </div>
-            <div class="setting-item" onclick="manualSyncAndMerge()">
-                <div class="setting-icon" style="background: #D1FAE5; color: #059669;"><i class="fas fa-cloud-upload-alt"></i></div>
+            
+            <!-- SYNC & RESTORE BUTTON WITH IN-LINE ANIMATION FEEDBACK -->
+            <div class="setting-item" onclick="manualSyncAndMerge()" id="syncSettingCard">
+                <div class="setting-icon" style="background: #D1FAE5; color: #059669;"><i class="fas fa-cloud-upload-alt" id="syncIcon"></i></div>
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Sync & Restore from Cloud</h4>
-                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Safe cloud sync & permanent merge</p>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;" id="syncDescText">Safe cloud sync & permanent merge</p>
+                    <div class="sync-inline-msg" id="syncInlineMsg"><i class="fas fa-check-circle"></i> Successfully Synced & Restored!</div>
                 </div>
             </div>
             
@@ -554,6 +560,9 @@
         let tempRegLogo = '';
         let tempEditLogo = '';
 
+        // ==========================================
+        // IMPROVED IMAGE QUALITY (MEDIUM/HD & CLEAR)
+        // ==========================================
         function compressImage(file, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -561,7 +570,7 @@
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    const maxW = 120, maxH = 120;
+                    const maxW = 400, maxH = 400; // बढ़ाई गई साइज़ ताकि फोटो साफ और स्पष्ट दिखे
                     let width = img.width, height = img.height;
 
                     if (width > height) {
@@ -572,7 +581,7 @@
                     canvas.width = width;
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
-                    callback(canvas.toDataURL('image/jpeg', 0.6));
+                    callback(canvas.toDataURL('image/jpeg', 0.85)); // 85% उच्च गुणवत्ता
                 };
                 img.src = e.target.result;
             };
@@ -600,7 +609,7 @@
             }
         }
 
-        function setSyncStatus(isSyncing, text = "Ready") {
+        function setSyncStatus(isSyncing, text = "Synced") {
             const el = document.getElementById('syncStatus');
             if (!el) return;
             el.className = isSyncing ? "sync-pill syncing" : "sync-pill synced";
@@ -612,7 +621,6 @@
                 students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
                 payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
                 
-                // Silent cloud sync & merge without any annoying popups
                 fetchAndMergeCloudData(currentAccount.email, false);
 
                 document.getElementById('authScreen').style.display = 'none';
@@ -625,11 +633,16 @@
         }
 
         // ==========================================
-        // SILENT SAFE MERGE & PERMANENT RETENTION (NO ALERTS)
+        // SILENT MERGE & IN-LINE ANIMATION FEEDBACK
         // ==========================================
-        function fetchAndMergeCloudData(email, showAlert = false) {
+        function fetchAndMergeCloudData(email, isManual = false) {
             if (!CLOUD_SYNC_URL) return;
             setSyncStatus(true, "Syncing");
+
+            if (isManual) {
+                document.getElementById('syncIcon').className = "fas fa-spinner fa-spin";
+                document.getElementById('syncDescTextinnerText = "Syncing with cloud...";
+            }
             
             fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
                 .then(res => res.json())
@@ -643,8 +656,8 @@
                         
                         if (cloudStudents.length === 0 && localStudents.length > 0) {
                             syncToCloud();
-                            if (showAlert) alert("Cloud was empty, uploaded current local data safely!");
                             setSyncStatus(false, "Synced");
+                            if (isManual) showInlineSyncSuccess();
                             return;
                         }
 
@@ -669,18 +682,38 @@
 
                         renderList();
                         syncToCloud(); 
-                        if (showAlert) alert("Data successfully synced, restored & merged safely!");
                     } else {
                         if (localStudents.length > 0) {
                             syncToCloud();
                         }
                     }
                     setSyncStatus(false, "Synced");
+                    if (isManual) showInlineSyncSuccess();
                 })
                 .catch(() => {
                     setSyncStatus(false, "Offline");
-                    if (showAlert) alert("Offline mode: Using local secure data.");
+                    if (isManual) {
+                        document.getElementById('syncIcon').className = "fas fa-cloud-upload-alt";
+                        document.getElementById('syncDescText').innerText = "Offline mode active";
+                    }
                 });
+        }
+
+        function showInlineSyncSuccess() {
+            const icon = document.getElementById('syncIcon');
+            const desc = document.getElementById('syncDescText');
+            const msg = document.getElementById('syncInlineMsg');
+            
+            icon.className = "fas fa-check-circle";
+            desc.style.display = "none";
+            msg.style.display = "block";
+
+            setTimeout(() => {
+                icon.className = "fas fa-cloud-upload-alt";
+                desc.style.display = "block";
+                desc.innerText = "Safe cloud sync & permanent merge";
+                msg.style.display = "none";
+            }, 3000);
         }
 
         function manualSyncAndMerge() {
@@ -689,9 +722,6 @@
             }
         }
 
-        // ==========================================
-        // PULL TO REFRESH LOGIC (SILENT & SMOOTH)
-        // ==========================================
         let touchstartY = 0;
         let touchendY = 0;
 
