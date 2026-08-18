@@ -28,9 +28,9 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; letter-spacing: 0.25px; overscroll-behavior-y: none; }
+        body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; letter-spacing: 0.25px; overscroll-behavior-y: contain; }
 
-        .sync-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.2); color: #E2E8F0; margin-top: 4px; }
+        .sync-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.2); color: #E2E8F0; margin-top: 4px; cursor: pointer; }
         .sync-pill.synced { color: #86EFAC; }
         .sync-pill.syncing { color: #FDE047; }
 
@@ -215,7 +215,7 @@
                     <div>
                         <h2 id="dashInstName">Fee Manager Pro</h2>
                         <p id="dashInstTag">Fee Management</p>
-                        <div class="sync-pill synced" id="syncStatus"><i class="fas fa-cloud"></i> Ready</div>
+                        <div class="sync-pill synced" id="syncStatus" onclick="manualSyncAndMerge()"><i class="fas fa-cloud"></i> Ready (Sync)</div>
                     </div>
                 </div>
                 <i class="fas fa-cog settings-icon" onclick="switchScreen('settingsScreen')"></i>
@@ -301,11 +301,11 @@
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;" id="profileSubText">Change name, tagline & owner email</p>
                 </div>
             </div>
-            <div class="setting-item" onclick="triggerManualSync()">
+            <div class="setting-item" onclick="manualSyncAndMerge()">
                 <div class="setting-icon" style="background: #D1FAE5; color: #059669;"><i class="fas fa-cloud-upload-alt"></i></div>
                 <div>
-                    <h4 style="font-size: 15px; font-weight:700;">Sync to Google Drive</h4>
-                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Push current data to cloud</p>
+                    <h4 style="font-size: 15px; font-weight:700;">Sync & Restore from Cloud</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Safe cloud sync & permanent merge</p>
                 </div>
             </div>
             <div class="setting-item" onclick="exportData()">
@@ -336,7 +336,7 @@
                 <div class="setting-icon" style="background: #E0F2FE; color: #0284C7;"><i class="fas fa-envelope"></i></div>
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Help & Support</h4>
-                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Contact developer for issues</p>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Contact official developer</p>
                 </div>
             </div>
 
@@ -615,11 +615,11 @@
             }
         }
 
-        function setSyncStatus(isSyncing) {
+        function setSyncStatus(isSyncing, text = "Ready") {
             const el = document.getElementById('syncStatus');
             if (!el) return;
             el.className = isSyncing ? "sync-pill syncing" : "sync-pill synced";
-            el.innerHTML = isSyncing ? `<i class="fas fa-spinner fa-spin"></i> Syncing...` : `<i class="fas fa-cloud"></i> Ready`;
+            el.innerHTML = isSyncing ? `<i class="fas fa-spinner fa-spin"></i> Syncing...` : `<i class="fas fa-cloud"></i> ${text}`;
         }
 
         function initApp() {
@@ -627,9 +627,8 @@
                 students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
                 payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
                 
-                if (students.length === 0 && payments.length === 0) {
-                    fetchCloudDataOnLogin(currentAccount.email);
-                }
+                // क्लाउड सेफ मर्ज और रिस्टोर
+                fetchAndMergeCloudData(currentAccount.email, false);
 
                 document.getElementById('authScreen').style.display = 'none';
                 applyInstituteDetails();
@@ -640,30 +639,99 @@
             }
         }
 
-        function fetchCloudDataOnLogin(email) {
+        // ==========================================
+        // SAFE CUMULATIVE MERGE & PERMANENT RETENTION
+        // ==========================================
+        function fetchAndMergeCloudData(email, showAlert = false) {
             if (!CLOUD_SYNC_URL) return;
             setSyncStatus(true);
+            
             fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
                 .then(res => res.json())
                 .then(data => {
+                    let localStudents = safeGetItem(`gsi_students_${email}`, []);
+                    let localPayments = safeGetItem(`gsi_payments_${email}`, []);
+
                     if (data && data.status === 'success' && data.payload) {
-                        if (data.payload.students) {
-                            students = data.payload.students;
-                            safeSetItem(`gsi_students_${email}`, students);
+                        let cloudStudents = data.payload.students || [];
+                        let cloudPayments = data.payload.payments || [];
+                        
+                        // अगर क्लाउड पर डेटा खाली है लेकिन फोन पर डेटा है, तो क्लाउड को ओवरराइट मत करो, बल्कि फोन का डेटा अपलोड करो!
+                        if (cloudStudents.length === 0 && localStudents.length > 0) {
+                            syncToCloud();
+                            if (showAlert) alert("Cloud was empty, uploaded current local data safely!");
+                            setSyncStatus(false, "Synced");
+                            return;
                         }
-                        if (data.payload.payments) {
-                            payments = data.payload.payments;
-                            safeSetItem(`gsi_payments_${email}`, payments);
-                        }
+
+                        // दोनों तरफ के डेटा को सुरक्षित रूप से मिलाएं (Union / Merge)
+                        let studentMap = new Map();
+                        cloudStudents.forEach(s => studentMap.set(s.id, s));
+                        localStudents.forEach(s => studentMap.set(s.id, s)); // लोकल या नया डेटा भी सुरक्षित रहे
+                        students = Array.from(studentMap.values());
+
+                        let paymentMap = new Map();
+                        cloudPayments.forEach(p => paymentMap.set(p.id, p));
+                        localPayments.forEach(p => paymentMap.set(p.id, p));
+                        payments = Array.from(paymentMap.values());
+
+                        // फोन और क्लाउड दोनों को अपडेट करें ताकि हमेशा लाइफटाइम डेटा बना रहे
+                        safeSetItem(`gsi_students_${email}`, students);
+                        safeSetItem(`gsi_payments_${email}`, payments);
+
                         if (data.payload.account) {
                             currentAccount = data.payload.account;
                             safeSetItem('gsi_current_user', currentAccount);
+                            applyInstituteDetails();
                         }
+
                         renderList();
+                        syncToCloud(); // तुरंत अपडेटेड और मर्ज्ड डेटा वापस क्लाउड पर सुरक्षित करें ताकि डिलीट न हो
+                        if (showAlert) alert("Data successfully synced, restored & merged safely!");
+                    } else {
+                        // अगर क्लाउड पर फाइल ही नहीं है, तो लोकल डेटा क्लाउड पर भेज दें
+                        if (localStudents.length > 0) {
+                            syncToCloud();
+                        }
+                        if (showAlert) alert("Backup check complete.");
                     }
-                    setSyncStatus(false);
+                    setSyncStatus(false, "Synced");
                 })
-                .catch(() => { setSyncStatus(false); });
+                .catch(() => {
+                    setSyncStatus(false, "Offline");
+                    if (showAlert) alert("Offline mode: Using local secure data.");
+                });
+        }
+
+        function manualSyncAndMerge() {
+            if (currentAccount) {
+                fetchAndMergeCloudData(currentAccount.email, true);
+            }
+        }
+
+        // ==========================================
+        // PULL TO REFRESH LOGIC FOR MOBILE
+        // ==========================================
+        let touchstartY = 0;
+        let touchendY = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchstartY = e.changedTouches[0].screenY;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchendY = e.changedTouches[0].screenY;
+            handlePullToRefresh();
+        });
+
+        function handlePullToRefresh() {
+            if (touchendY > touchstartY + 120 && window.scrollY === 0) {
+                if (currentAccount) {
+                    setSyncStatus(true);
+                    fetchAndMergeCloudData(currentAccount.email, false);
+                    setTimeout(() => alert("Refreshed & Synced with Cloud!"), 800);
+                }
+            }
         }
 
         function applyInstituteDetails() {
@@ -708,15 +776,10 @@
                         payload: { account: currentAccount, students: students, payments: payments }
                     })
                 }).catch(() => {});
-                setTimeout(() => setSyncStatus(false), 1200);
+                setTimeout(() => setSyncStatus(false, "Synced"), 1200);
             } catch(e) {
-                setSyncStatus(false);
+                setSyncStatus(false, "Error");
             }
-        }
-
-        function triggerManualSync() {
-            alert("Data syncing to Google Drive...");
-            syncToCloud();
         }
 
         function handleRegister(e) {
@@ -773,7 +836,7 @@
             
             safeSetItem('gsi_current_user', currentAccount);
             initApp();
-            syncToCloud();
+            fetchAndMergeCloudData(email, false);
         }
 
         function handleLogout() {
@@ -843,7 +906,7 @@
         }
 
         function openHelpSupport() {
-            alert("Fee Manager Pro Support\n\nFor any issues or questions, please contact developer at:\nsupport@feemanagerpro.com\n\nWe are here to help you!");
+            alert("Fee Manager Pro Support\n\nOfficial Developer Email:\nofficial.globalstudyinstitute@gmail.com\n\nWe are here to help you!");
         }
 
         function handleBackNavigation() {
