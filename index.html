@@ -282,7 +282,7 @@
         <button class="fab" onclick="openFeeModal()"><i class="fas fa-plus-circle"></i> Record Fee</button>
     </div>
 
-    <!-- 3. SETTINGS SCREEN -->
+    <!-- 3. SETTINGS SCREEN (CLEANED UP: EXTRA BACKUP BUTTONS REMOVED) -->
     <div id="settingsScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -307,21 +307,6 @@
                     <h4 style="font-size: 15px; font-weight:700;">Sync & Restore from Cloud</h4>
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Safe cloud sync & permanent merge</p>
                 </div>
-            </div>
-            <div class="setting-item" onclick="exportData()">
-                <div class="setting-icon" style="background: var(--primary-light); color: #2563EB;"><i class="fas fa-download"></i></div>
-                <div>
-                    <h4 style="font-size: 15px; font-weight:700;">Download Backup File</h4>
-                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Offline copy (.json) on phone</p>
-                </div>
-            </div>
-            <div class="setting-item" onclick="document.getElementById('importFile').click()">
-                <div class="setting-icon" style="background: var(--secondary-light); color: var(--secondary);"><i class="fas fa-upload"></i></div>
-                <div>
-                    <h4 style="font-size: 15px; font-weight:700;">Restore from File</h4>
-                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Load data from .json backup</p>
-                </div>
-                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
             </div>
             
             <div class="section-heading">About & Legal</div>
@@ -627,7 +612,7 @@
                 students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
                 payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
                 
-                // क्लाउड सेफ मर्ज और रिस्टोर
+                // Silent cloud sync & merge without any annoying popups
                 fetchAndMergeCloudData(currentAccount.email, false);
 
                 document.getElementById('authScreen').style.display = 'none';
@@ -640,11 +625,11 @@
         }
 
         // ==========================================
-        // SAFE CUMULATIVE MERGE & PERMANENT RETENTION
+        // SILENT SAFE MERGE & PERMANENT RETENTION (NO ALERTS)
         // ==========================================
         function fetchAndMergeCloudData(email, showAlert = false) {
             if (!CLOUD_SYNC_URL) return;
-            setSyncStatus(true);
+            setSyncStatus(true, "Syncing");
             
             fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
                 .then(res => res.json())
@@ -656,7 +641,6 @@
                         let cloudStudents = data.payload.students || [];
                         let cloudPayments = data.payload.payments || [];
                         
-                        // अगर क्लाउड पर डेटा खाली है लेकिन फोन पर डेटा है, तो क्लाउड को ओवरराइट मत करो, बल्कि फोन का डेटा अपलोड करो!
                         if (cloudStudents.length === 0 && localStudents.length > 0) {
                             syncToCloud();
                             if (showAlert) alert("Cloud was empty, uploaded current local data safely!");
@@ -664,10 +648,9 @@
                             return;
                         }
 
-                        // दोनों तरफ के डेटा को सुरक्षित रूप से मिलाएं (Union / Merge)
                         let studentMap = new Map();
                         cloudStudents.forEach(s => studentMap.set(s.id, s));
-                        localStudents.forEach(s => studentMap.set(s.id, s)); // लोकल या नया डेटा भी सुरक्षित रहे
+                        localStudents.forEach(s => studentMap.set(s.id, s));
                         students = Array.from(studentMap.values());
 
                         let paymentMap = new Map();
@@ -675,7 +658,6 @@
                         localPayments.forEach(p => paymentMap.set(p.id, p));
                         payments = Array.from(paymentMap.values());
 
-                        // फोन और क्लाउड दोनों को अपडेट करें ताकि हमेशा लाइफटाइम डेटा बना रहे
                         safeSetItem(`gsi_students_${email}`, students);
                         safeSetItem(`gsi_payments_${email}`, payments);
 
@@ -686,14 +668,12 @@
                         }
 
                         renderList();
-                        syncToCloud(); // तुरंत अपडेटेड और मर्ज्ड डेटा वापस क्लाउड पर सुरक्षित करें ताकि डिलीट न हो
+                        syncToCloud(); 
                         if (showAlert) alert("Data successfully synced, restored & merged safely!");
                     } else {
-                        // अगर क्लाउड पर फाइल ही नहीं है, तो लोकल डेटा क्लाउड पर भेज दें
                         if (localStudents.length > 0) {
                             syncToCloud();
                         }
-                        if (showAlert) alert("Backup check complete.");
                     }
                     setSyncStatus(false, "Synced");
                 })
@@ -710,7 +690,7 @@
         }
 
         // ==========================================
-        // PULL TO REFRESH LOGIC FOR MOBILE
+        // PULL TO REFRESH LOGIC (SILENT & SMOOTH)
         // ==========================================
         let touchstartY = 0;
         let touchendY = 0;
@@ -727,9 +707,8 @@
         function handlePullToRefresh() {
             if (touchendY > touchstartY + 120 && window.scrollY === 0) {
                 if (currentAccount) {
-                    setSyncStatus(true);
+                    setSyncStatus(true, "Refreshing");
                     fetchAndMergeCloudData(currentAccount.email, false);
-                    setTimeout(() => alert("Refreshed & Synced with Cloud!"), 800);
                 }
             }
         }
@@ -764,7 +743,7 @@
 
         function syncToCloud() {
             if (!currentAccount || !CLOUD_SYNC_URL) return;
-            setSyncStatus(true);
+            setSyncStatus(true, "Syncing");
             try {
                 fetch(CLOUD_SYNC_URL, {
                     method: 'POST',
