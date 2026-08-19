@@ -46,8 +46,8 @@
         .auth-toggle button { flex: 1; padding: 12px; border: none; background: transparent; font-weight: 700; font-size: 13px; color: var(--text-muted); border-radius: 11px; cursor: pointer; transition: 0.2s; min-height: 48px; }
         .auth-toggle button.active { background: var(--surface); color: #2563EB; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         
-        .dashboard-header { background: linear-gradient(135deg, #1E3A8A, #2563EB); padding: 24px 20px 20px 20px; border-radius: 0 0 28px 28px; color: white; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.18); }
-        .app-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .dashboard-header { background: linear-gradient(135deg, #1E3A8A, #2563EB); padding: 24px 20px 44px 20px; border-radius: 0 0 28px 28px; color: white; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.18); }
+        .app-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .app-bar .brand { display: flex; align-items: center; gap: 12px; max-width: 80%; }
         .app-bar .logo-icon { background: white; color: #2563EB; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; flex-shrink: 0; }
         .app-bar .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
@@ -55,13 +55,7 @@
         .app-bar p { font-size: 11px; opacity: 0.88; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .settings-icon { font-size: 22px; cursor: pointer; padding: 10px; }
 
-        /* BATCH FILTER CHIPS */
-        .filter-row { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 4px 0; scrollbar-width: none; }
-        .filter-row::-webkit-scrollbar { display: none; }
-        .filter-chip { background: rgba(255,255,255,0.18); padding: 6px 14px; border-radius: 16px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.15); transition: 0.2s; }
-        .filter-chip.active { background: white; color: #1E3A8A; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .stat-card { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); padding: 14px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18); }
         .stat-card.full-width { grid-column: span 2; background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.06)); }
         .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; opacity: 0.92; }
@@ -72,17 +66,17 @@
         .screen.active { display: block; animation: fadeIn 0.22s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .main-container { padding: 0 18px; margin-top: -14px; position: relative; z-index: 2; }
+        .main-container { padding: 0 18px; margin-top: -18px; position: relative; z-index: 2; }
         .search-box { width: 100%; min-height: 48px; padding: 14px 16px 14px 44px; border: 1px solid #E2E8F0; border-radius: 16px; font-size: 14px; background: var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="15" fill="%2394A3B8"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>') no-repeat 16px center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); outline: none; margin-bottom: 16px; font-weight: 500; }
         
+        .batch-header { font-size: 13px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.8px; margin: 18px 0 10px 5px; }
         .student-card { background: var(--surface); padding: 15px 16px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); cursor: pointer; border: 1px solid #E2E8F0; min-height: 72px; }
         .avatar { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; background: var(--primary-light); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
         .card-content { flex: 1; }
         .card-header-row { display: flex; justify-content: space-between; align-items: center; }
         .card-content h4 { font-size: 15px; font-weight: 700; color: var(--text-main); letter-spacing: 0.3px; }
         .card-content p { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
-        .batch-badge { background: #F1F5F9; color: var(--text-muted); padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-top: 5px; display: inline-block; letter-spacing: 0.4px; }
-        .sid-badge { background: #DBEAFE; color: #1D4ED8; padding: 2px 7px; border-radius: 6px; font-size: 10.5px; font-weight: 800; margin-left: 6px; letter-spacing: 0.4px; }
+        .sid-badge { background: #DBEAFE; color: #1D4ED8; padding: 2px 7px; border-radius: 6px; font-size: 10.5px; font-weight: 800; margin-left: 6px; letter-spacing: 0.4px; display: inline-block; }
 
         .profile-hero { background: var(--surface); margin: -28px 18px 20px 18px; padding: 22px 18px; border-radius: 22px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); position: relative; text-align: center; z-index: 2; border: 1px solid #E2E8F0; }
         .profile-hero .avatar-large { width: 82px; height: 82px; border-radius: 20px; margin: -56px auto 12px auto; background: var(--primary-light); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; border: 4px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.08); object-fit: cover; }
@@ -104,7 +98,7 @@
         .setting-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0; }
         .section-heading { font-size: 14px; color: var(--text-muted); font-weight: 800; padding: 0 18px; margin: 24px 0 10px 0; text-transform: uppercase; letter-spacing: 0.8px; }
         
-        .sync-inline-msg { font-size: 11px; font-weight: 700; color: var(--secondary); display: none; margin-top: 2px; }
+        .sync-inline-msg { font-size: 11px; font-weight: 700; color: var(--secondary); display: none; margin-top: 4px; }
         
         .payment-list { padding: 0 18px; }
         .payment-card { background: var(--surface); padding: 16px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #E2E8F0; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 12px; }
@@ -161,7 +155,6 @@
 </head>
 <body>
 
-    <!-- 0. AUTH SCREEN -->
     <div id="authScreen" class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
@@ -195,7 +188,7 @@
                 </div>
                 <div class="form-group">
                     <label>Secure App Password / PIN *</label>
-                    <input type="password" id="regPin" class="form-control" placeholder="4-6 Digit Security PIN" required minlength="4">
+                    <input type="password" inputmode="numeric" id="regPin" class="form-control" placeholder="4-Digit Security PIN" required minlength="4" maxlength="4" pattern="\d{4}">
                 </div>
                 <div class="form-group">
                     <label>Phone / WhatsApp Number *</label>
@@ -216,7 +209,7 @@
                 </div>
                 <div class="form-group">
                     <label>Security Password / PIN *</label>
-                    <input type="password" id="loginPin" class="form-control" placeholder="Enter your security PIN" required>
+                    <input type="password" inputmode="numeric" id="loginPin" class="form-control" placeholder="Enter your 4-digit PIN" required minlength="4" maxlength="4" pattern="\d{4}">
                 </div>
                 <div style="text-align: right; margin-bottom: 15px; margin-top: -8px;">
                     <span style="font-size: 12px; color: #2563EB; font-weight: 700; cursor: pointer;" onclick="openForgotPinModal()">Forgot PIN?</span>
@@ -226,7 +219,6 @@
         </div>
     </div>
 
-    <!-- 1. DASHBOARD SCREEN -->
     <div id="homeScreen" class="screen">
         <div class="dashboard-header">
             <div class="app-bar">
@@ -240,10 +232,6 @@
                 </div>
                 <i class="fas fa-cog settings-icon" onclick="switchScreen('settingsScreen')"></i>
             </div>
-            
-            <!-- BATCH FILTER CHIPS (NEW FEATURE) -->
-            <div class="filter-row" id="batchFiltersContainer"></div>
-
             <div class="stats-grid">
                 <div class="stat-card full-width">
                     <div class="stat-header"><p>Total Revenue</p><i class="fas fa-chart-bar"></i></div>
@@ -260,7 +248,7 @@
             </div>
         </div>
 
-        <div class="main-container" style="margin-top: 14px;">
+        <div class="main-container">
             <input type="text" id="searchInput" class="search-box" placeholder="Search student by name or ID..." onkeyup="renderList()">
             <div id="listContainer"></div>
         </div>
@@ -268,7 +256,6 @@
         <button class="fab" onclick="openStudentModal('add')"><i class="fas fa-user-plus"></i> Add Student</button>
     </div>
 
-    <!-- 2. PROFILE SCREEN -->
     <div id="profileScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 60px;">
             <div class="app-bar">
@@ -306,7 +293,6 @@
         <button class="fab" onclick="openFeeModal()"><i class="fas fa-plus-circle"></i> Record Fee</button>
     </div>
 
-    <!-- 3. SETTINGS SCREEN -->
     <div id="settingsScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -332,15 +318,16 @@
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Institute Profile</h4>
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;" id="profileSubText">Change name, tagline & owner email</p>
+                    <div class="sync-inline-msg" id="instEditInlineMsg"></div>
                 </div>
             </div>
 
-            <!-- EXCEL EXPORT BUTTON (NEW ADVANCED FEATURE) -->
             <div class="setting-item" onclick="exportToCSV()">
-                <div class="setting-icon" style="background: #FEF3C7; color: #B45309;"><i class="fas fa-file-excel"></i></div>
+                <div class="setting-icon" style="background: #ECFDF5; color: #059669;"><i class="fas fa-file-excel"></i></div>
                 <div>
-                    <h4 style="font-size: 15px; font-weight:700;">Export to Excel (CSV)</h4>
-                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">Download all student records for Excel</p>
+                    <h4 style="font-size: 15px; font-weight:700;">Export to Excel</h4>
+                    <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;">View & Share detailed student data as CSV</p>
+                    <div class="sync-inline-msg" id="exportInlineMsg"></div>
                 </div>
             </div>
             
@@ -349,7 +336,7 @@
                 <div>
                     <h4 style="font-size: 15px; font-weight:700;">Sync & Restore from Cloud</h4>
                     <p style="font-size: 12px; color:var(--text-muted); margin-top:2px;" id="syncDescText">Safe cloud sync & permanent merge</p>
-                    <div class="sync-inline-msg" id="syncInlineMsg"><i class="fas fa-check-circle"></i> Successfully Synced & Restored!</div>
+                    <div class="sync-inline-msg" id="syncInlineMsg"><i class="fas fa-check-circle"></i> Successfully Synced!</div>
                 </div>
             </div>
             
@@ -387,7 +374,6 @@
         </div>
     </div>
 
-    <!-- MODAL: CHANGE PIN -->
     <div id="pinModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -397,18 +383,17 @@
             <form id="pinChangeForm" onsubmit="saveNewPin(event)">
                 <div class="form-group">
                     <label>Current PIN *</label>
-                    <input type="password" id="oldPinInput" class="form-control" placeholder="Enter current PIN" required>
+                    <input type="password" inputmode="numeric" id="oldPinInput" class="form-control" placeholder="Enter current PIN" required maxlength="4" pattern="\d{4}">
                 </div>
                 <div class="form-group">
                     <label>New PIN *</label>
-                    <input type="password" id="newPinInput" class="form-control" placeholder="Enter new 4-digit PIN" required minlength="4">
+                    <input type="password" inputmode="numeric" id="newPinInput" class="form-control" placeholder="Enter new 4-digit PIN" required minlength="4" maxlength="4" pattern="\d{4}">
                 </div>
                 <button type="submit" class="btn-submit">Update PIN Real-Time</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: FORGOT PIN -->
     <div id="forgotPinModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -422,14 +407,13 @@
                 </div>
                 <div class="form-group">
                     <label>Set New PIN *</label>
-                    <input type="password" id="forgotNewPinInput" class="form-control" placeholder="Enter new 4-digit PIN" required minlength="4">
+                    <input type="password" inputmode="numeric" id="forgotNewPinInput" class="form-control" placeholder="Enter new 4-digit PIN" required minlength="4" maxlength="4" pattern="\d{4}">
                 </div>
                 <button type="submit" class="btn-submit">Reset & Login Securely</button>
             </form>
         </div>
     </div>
 
-    <!-- 4. PRIVACY POLICY SCREEN -->
     <div id="privacyScreen" class="screen">
         <div class="dashboard-header" style="padding-bottom: 30px;">
             <div class="app-bar">
@@ -457,16 +441,12 @@
 
             <h3>5. Data Deletion</h3>
             <p>You have the right to request the deletion of your data. You can delete your local data instantly by using the "Delete Account & Data" option in the App Settings.</p>
-
-            <h3>6. Contact Us</h3>
-            <p>If you have questions or comments about this policy, you may email our support team via the Help & Support section.</p>
             
             <br>
             <p><em>Last Updated: August 2026</em></p>
         </div>
     </div>
 
-    <!-- MODAL: EDIT INSTITUTE -->
     <div id="instModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -504,7 +484,6 @@
         </div>
     </div>
 
-    <!-- MODAL: STUDENT -->
     <div id="studentModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -551,7 +530,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD/EDIT PAYMENT -->
     <div id="paymentModal" class="modal-overlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -610,54 +588,42 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
         const CLOUD_SYNC_URL = "https://script.google.com/macros/s/AKfycbxYvmhfCNqvCGG_Ho5SnXMjBtxtH6P_VwoS0ANH385ovWYFsO6P2_WzmBNV2tcYhkDC/exec";
 
         function safeSetItem(key, value) {
-            try {
-                localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
-            } catch(e) {
-                console.warn("Storage Quota Managed:", key);
-            }
+            try { localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value)); } catch(e) {}
         }
 
         function safeGetItem(key, fallback = null) {
-            try {
-                const item = localStorage.getItem(key);
-                return item ? JSON.parse(item) : fallback;
-            } catch(e) {
-                return fallback;
+            try { const item = localStorage.getItem(key); return item ? JSON.parse(item) : fallback; } catch(e) { return fallback; }
+        }
+
+        function showInlineMsg(id, msg) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+                el.style.display = 'block';
+                setTimeout(() => el.style.display = 'none', 3500);
             }
         }
 
         let currentAccount = safeGetItem('gsi_current_user', null);
         let allAccounts = safeGetItem('gsi_accounts', []);
-        let students = [];
-        let payments = [];
-        let curId = null;
-        let activePhone = '';
-        let tempRegLogo = '';
-        let tempEditLogo = '';
-        let activeBatchFilter = "All"; // न्यू फीचर: बैच फिल्टर स्टेट
+        let students = []; let payments = [];
+        let curId = null; let activePhone = '';
+        let tempRegLogo = ''; let tempEditLogo = '';
 
         function compressImage(file, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const maxW = 800, maxH = 800;
-                    let width = img.width, height = img.height;
-
-                    if (width > height) {
-                        if (width > maxW) { height *= maxW / width; width = maxW; }
-                    } else {
-                        if (height > maxH) { width *= maxH / height; height = maxH; }
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
+                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                    const maxW = 800, maxH = 800; let width = img.width, height = img.height;
+                    if (width > height) { if (width > maxW) { height *= maxW / width; width = maxW; } } 
+                    else { if (height > maxH) { width *= maxH / height; height = maxH; } }
+                    canvas.width = width; canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
                     callback(canvas.toDataURL('image/jpeg', 0.92));
                 };
@@ -692,8 +658,7 @@
             if (!el) return;
             if (!navigator.onLine) {
                 el.className = "sync-pill offline";
-                el.innerHTML = `<i class="fas fa-wifi-slash"></i> Offline (Saved Locally)`;
-                return;
+                el.innerHTML = `<i class="fas fa-wifi-slash"></i> Offline (Saved Locally)`; return;
             }
             el.className = isSyncing ? "sync-pill syncing" : "sync-pill synced";
             el.innerHTML = isSyncing ? `<i class="fas fa-spinner fa-spin"></i> Syncing...` : `<i class="fas fa-cloud"></i> ${text}`;
@@ -703,189 +668,73 @@
             if (currentAccount) {
                 students = safeGetItem(`gsi_students_${currentAccount.email}`, []);
                 payments = safeGetItem(`gsi_payments_${currentAccount.email}`, []);
-                
-                renderFilters();
                 renderList();
-
-                if (navigator.onLine) {
-                    fetchAndMergeCloudData(currentAccount.email, false);
-                } else {
-                    setSyncStatus(false, "Offline");
-                }
-
+                if (navigator.onLine) { fetchAndMergeCloudData(currentAccount.email, false); } 
+                else { setSyncStatus(false, "Offline"); }
                 document.getElementById('authScreen').style.display = 'none';
-                applyInstituteDetails();
-                switchScreen('homeScreen');
+                applyInstituteDetails(); switchScreen('homeScreen');
             } else {
                 document.getElementById('authScreen').style.display = 'flex';
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             }
         }
 
-        window.addEventListener('online', () => {
-            if (currentAccount) {
-                fetchAndMergeCloudData(currentAccount.email, false);
-            }
-        });
-
-        window.addEventListener('offline', () => {
-            setSyncStatus(false, "Offline");
-        });
+        window.addEventListener('online', () => { if (currentAccount) fetchAndMergeCloudData(currentAccount.email, false); });
+        window.addEventListener('offline', () => setSyncStatus(false, "Offline"));
 
         function fetchAndMergeCloudData(email, isManual = false) {
             if (!CLOUD_SYNC_URL || !navigator.onLine) {
-                if (isManual) alert("You are offline. Showing local data securely.");
-                return;
+                if (isManual) showInlineMsg('syncInlineMsg', "Offline: Saving Locally"); return;
             }
-
             setSyncStatus(true, "Syncing");
-
             if (isManual) {
-                const icon = document.getElementById('syncIcon');
-                const desc = document.getElementById('syncDescText');
-                if(icon) icon.className = "fas fa-spinner fa-spin";
-                if(desc) desc.innerText = "Syncing with cloud...";
+                const icon = document.getElementById('syncIcon'); const desc = document.getElementById('syncDescText');
+                if(icon) icon.className = "fas fa-spinner fa-spin"; if(desc) desc.innerText = "Syncing with cloud...";
             }
-            
             fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
                 .then(res => res.json())
                 .then(data => {
-                    let localStudents = safeGetItem(`gsi_students_${email}`, []);
-                    let localPayments = safeGetItem(`gsi_payments_${email}`, []);
+                    let localStudents = safeGetItem(`gsi_students_${email}`, []); let localPayments = safeGetItem(`gsi_payments_${email}`, []);
                     let deletedIds = safeGetItem(`gsi_deleted_${email}`, []);
-
                     if (data && data.status === 'success' && data.payload) {
-                        let cloudStudents = data.payload.students || [];
-                        let cloudPayments = data.payload.payments || [];
-                        
+                        let cloudStudents = data.payload.students || []; let cloudPayments = data.payload.payments || [];
                         cloudStudents = cloudStudents.filter(s => !deletedIds.includes(s.id));
                         localStudents = localStudents.filter(s => !deletedIds.includes(s.id));
-
-                        let studentMap = new Map();
-                        cloudStudents.forEach(s => studentMap.set(s.id, s));
-                        localStudents.forEach(s => studentMap.set(s.id, s));
+                        let studentMap = new Map(); cloudStudents.forEach(s => studentMap.set(s.id, s)); localStudents.forEach(s => studentMap.set(s.id, s));
                         students = Array.from(studentMap.values());
-
-                        let paymentMap = new Map();
-                        cloudPayments.forEach(p => paymentMap.set(p.id, p));
-                        localPayments.forEach(p => paymentMap.set(p.id, p));
+                        let paymentMap = new Map(); cloudPayments.forEach(p => paymentMap.set(p.id, p)); localPayments.forEach(p => paymentMap.set(p.id, p));
                         payments = Array.from(paymentMap.values());
-
-                        safeSetItem(`gsi_students_${email}`, students);
-                        safeSetItem(`gsi_payments_${email}`, payments);
-
-                        if (data.payload.account) {
-                            currentAccount = data.payload.account;
-                            safeSetItem('gsi_current_user', currentAccount);
-                            applyInstituteDetails();
-                        }
-
-                        renderFilters();
-                        renderList();
-                        syncToCloud(); 
-                    } else {
-                        if (localStudents.length > 0) {
-                            syncToCloud();
-                        }
-                    }
-                    setSyncStatus(false, "Synced");
-                    if (isManual) showInlineSyncSuccess();
+                        safeSetItem(`gsi_students_${email}`, students); safeSetItem(`gsi_payments_${email}`, payments);
+                        if (data.payload.account) { currentAccount = data.payload.account; safeSetItem('gsi_current_user', currentAccount); applyInstituteDetails(); }
+                        renderList(); syncToCloud(); 
+                    } else { if (localStudents.length > 0) syncToCloud(); }
+                    setSyncStatus(false, "Synced"); if (isManual) showInlineSyncSuccess();
                 })
                 .catch(() => {
                     setSyncStatus(false, "Offline");
                     if (isManual) {
-                        const icon = document.getElementById('syncIcon');
-                        const desc = document.getElementById('syncDescText');
-                        if(icon) icon.className = "fas fa-cloud-upload-alt";
-                        if(desc) desc.innerText = "Offline mode active";
+                        const icon = document.getElementById('syncIcon'); const desc = document.getElementById('syncDescText');
+                        if(icon) icon.className = "fas fa-cloud-upload-alt"; if(desc) desc.innerText = "Offline mode active";
+                        showInlineMsg('syncInlineMsg', "Failed! You are offline.");
                     }
                 });
         }
 
         function showInlineSyncSuccess() {
-            const icon = document.getElementById('syncIcon');
-            const desc = document.getElementById('syncDescText');
-            const msg = document.getElementById('syncInlineMsg');
-            
+            const icon = document.getElementById('syncIcon'); const desc = document.getElementById('syncDescText'); const msg = document.getElementById('syncInlineMsg');
             if(!icon || !desc || !msg) return;
-
-            icon.className = "fas fa-check-circle";
-            desc.style.display = "none";
-            msg.style.display = "block";
-
+            icon.className = "fas fa-check-circle"; desc.style.display = "none";
+            msg.style.display = "block"; msg.innerHTML = `<i class="fas fa-check-circle"></i> Successfully Synced & Restored!`;
             setTimeout(() => {
-                icon.className = "fas fa-cloud-upload-alt";
-                desc.style.display = "block";
-                desc.innerText = "Safe cloud sync & permanent merge";
-                msg.style.display = "none";
+                icon.className = "fas fa-cloud-upload-alt"; desc.style.display = "block";
+                desc.innerText = "Safe cloud sync & permanent merge"; msg.style.display = "none";
             }, 3000);
         }
 
         function manualSyncAndMerge() {
             if (currentAccount) {
-                if (!navigator.onLine) {
-                    alert("No internet connection! Working offline with local data.");
-                    return;
-                }
+                if (!navigator.onLine) { showInlineMsg('syncInlineMsg', "No internet! Working offline."); return; }
                 fetchAndMergeCloudData(currentAccount.email, true);
-            }
-        }
-
-        let touchstartY = 0;
-        let touchendY = 0;
-
-        document.addEventListener('touchstart', e => {
-            touchstartY = e.changedTouches[0].screenY;
-        });
-
-        document.addEventListener('touchend', e => {
-            touchendY = e.changedTouches[0].screenY;
-            handlePullToRefresh();
-        });
-
-        function handlePullToRefresh() {
-            if (touchendY > touchstartY + 120 && window.scrollY === 0) {
-                if (currentAccount && navigator.onLine) {
-                    setSyncStatus(true, "Refreshing");
-                    fetchAndMergeCloudData(currentAccount.email, false);
-                }
-            }
-        }
-
-        function applyInstituteDetails() {
-            if (!currentAccount) return;
-            document.getElementById('dashInstName').innerText = currentAccount.instName || "Fee Manager Pro";
-            document.getElementById('dashInstTag').innerText = currentAccount.tagline || "Fee Management";
-            document.getElementById('profileSubText').innerText = `Logged in: ${currentAccount.email}`;
-            
-            const logoContainer = document.getElementById('mainHeaderLogo');
-            logoContainer.innerHTML = currentAccount.logo ? `<img src="${currentAccount.logo}">` : `<i class="fas fa-graduation-cap"></i>`;
-        }
-
-        function switchAuthTab(tab) {
-            const tabReg = document.getElementById('tabRegister');
-            const tabLog = document.getElementById('tabLogin');
-            const formReg = document.getElementById('registerForm');
-            const formLog = document.getElementById('loginForm');
-            const title = document.getElementById('authTitle');
-            const subtitle = document.getElementById('authSubtitle');
-
-            if (!tabReg || !tabLog || !formReg || !formLog) return;
-
-            if (tab === 'register') {
-                tabReg.classList.add('active');
-                tabLog.classList.remove('active');
-                formReg.style.display = 'block';
-                formLog.style.display = 'none';
-                if(title) title.innerText = "Fee Manager Pro";
-                if(subtitle) subtitle.innerText = "Set up your coaching in 1 minute";
-            } else {
-                tabLog.classList.add('active');
-                tabReg.classList.remove('active');
-                formReg.style.display = 'none';
-                formLog.style.display = 'block';
-                if(title) title.innerText = "Welcome Back";
-                if(subtitle) subtitle.innerText = "Secure Login";
             }
         }
 
@@ -893,19 +742,117 @@
             if (!currentAccount || !CLOUD_SYNC_URL || !navigator.onLine) return;
             setSyncStatus(true, "Syncing");
             try {
+                let deletedIds = safeGetItem(`gsi_deleted_${currentAccount.email}`, []);
                 fetch(CLOUD_SYNC_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: currentAccount.email,
-                        action: 'sync',
-                        payload: { account: currentAccount, students: students, payments: payments }
-                    })
+                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentAccount.email, action: 'sync', payload: { account: currentAccount, students: students, payments: payments, deleted: deletedIds } })
                 }).catch(() => {});
                 setTimeout(() => setSyncStatus(false, "Synced"), 1200);
-            } catch(e) {
-                setSyncStatus(false, "Offline");
+            } catch(e) { setSyncStatus(false, "Offline"); }
+        }
+
+        // ==========================================
+        // 1. ADVANCED CSV EXPORT (Fixed Columns & Finance Details)
+        // ==========================================
+        function exportToCSV() {
+            if (!currentAccount) return;
+            if (students.length === 0) {
+                showInlineMsg('exportInlineMsg', 'No Student Data to Export!'); return;
+            }
+
+            // Added Double Quotes to all headers to prevent Excel scattering
+            let csvContent = '"Student ID","Student Name","Father\'s Name","Phone","Batch/Class","Admission Date","Base Monthly Fee (Rs.)","Total Collected (Rs.)","Current Due (Rs.)","Current Advance (Rs.)","Last Payment Date"\n';
+            
+            const sortedStudents = [...students].sort((a, b) => a.id - b.id);
+            
+            sortedStudents.forEach(s => {
+                // Formatting text to avoid breaking quotes
+                const cleanName = s.n.replace(/"/g, '""'); 
+                const cleanFname = s.fn.replace(/"/g, '""');
+                
+                // Calculating Financial History for Export
+                let totalCollected = 0;
+                let runningBalance = 0; 
+                let lastPaymentDate = "No Payment";
+
+                const studentPayments = payments.filter(p => p.sid === s.id).sort((a, b) => new Date(a.pDate) - new Date(b.pDate));
+                
+                studentPayments.forEach(p => {
+                    totalCollected += parseFloat(p.amt || 0);
+                    const payable = Math.max(0, parseFloat(p.baseFee || 0) - parseFloat(p.disc || 0));
+                    runningBalance += (parseFloat(p.amt || 0) - payable);
+                });
+
+                if (studentPayments.length > 0) {
+                    lastPaymentDate = formatDate(studentPayments[studentPayments.length - 1].pDate);
+                }
+
+                let currentDue = runningBalance < 0 ? Math.abs(runningBalance) : 0;
+                let currentAdv = runningBalance > 0 ? runningBalance : 0;
+
+                // Wrapping every value in Double Quotes "" so commas/spaces don't split columns
+                csvContent += `"${s.code}","${cleanName}","${cleanFname}","${s.ph}","${s.b}","${s.ad}","${s.fee}","${totalCollected}","${currentDue}","${currentAdv}","${lastPaymentDate}"\n`;
+            });
+
+            const fileName = `${currentAccount.instName.replace(/\s+/g, '_')}_Students_Report.csv`;
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
+            const file = new File([blob], fileName, { type: 'text/csv' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    title: 'Student Financial Report',
+                    files: [file]
+                }).then(() => {
+                    showInlineMsg('exportInlineMsg', 'Share Menu Opened Successfully!');
+                }).catch((error) => {
+                    fallbackDownload(blob, fileName, 'exportInlineMsg');
+                });
+            } else {
+                fallbackDownload(blob, fileName, 'exportInlineMsg');
+            }
+        }
+
+        function fallbackDownload(blob, fileName, msgId) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            if(msgId) showInlineMsg(msgId, 'File Request Sent to Browser!');
+        }
+
+        let touchstartY = 0; let touchendY = 0;
+        document.addEventListener('touchstart', e => { touchstartY = e.changedTouches[0].screenY; });
+        document.addEventListener('touchend', e => {
+            touchendY = e.changedTouches[0].screenY;
+            if (touchendY > touchstartY + 120 && window.scrollY === 0) {
+                if (currentAccount && navigator.onLine) { setSyncStatus(true, "Refreshing"); fetchAndMergeCloudData(currentAccount.email, false); }
+            }
+        });
+
+        function applyInstituteDetails() {
+            if (!currentAccount) return;
+            document.getElementById('dashInstName').innerText = currentAccount.instName || "Fee Manager Pro";
+            document.getElementById('dashInstTag').innerText = currentAccount.tagline || "Fee Management";
+            document.getElementById('profileSubText').innerText = `Logged in: ${currentAccount.email}`;
+            const logoContainer = document.getElementById('mainHeaderLogo');
+            logoContainer.innerHTML = currentAccount.logo ? `<img src="${currentAccount.logo}">` : `<i class="fas fa-graduation-cap"></i>`;
+        }
+
+        function switchAuthTab(tab) {
+            const tabReg = document.getElementById('tabRegister'); const tabLog = document.getElementById('tabLogin');
+            const formReg = document.getElementById('registerForm'); const formLog = document.getElementById('loginForm');
+            const title = document.getElementById('authTitle'); const subtitle = document.getElementById('authSubtitle');
+            if (tab === 'register') {
+                tabReg.classList.add('active'); tabLog.classList.remove('active');
+                formReg.style.display = 'block'; formLog.style.display = 'none';
+                if(title) title.innerText = "Fee Manager Pro"; if(subtitle) subtitle.innerText = "Set up your coaching in 1 minute";
+            } else {
+                tabLog.classList.add('active'); tabReg.classList.remove('active');
+                formReg.style.display = 'none'; formLog.style.display = 'block';
+                if(title) title.innerText = "Welcome Back"; if(subtitle) subtitle.innerText = "Secure Login";
             }
         }
 
@@ -914,338 +861,154 @@
             const email = document.getElementById('regEmail').value.trim().toLowerCase();
             const phone = document.getElementById('regPhone').value.trim();
             const pin = document.getElementById('regPin').value.trim();
-
+            if (pin.length !== 4) { alert("PIN must be exactly 4 digits!"); return; }
             const existing = allAccounts.find(a => a.email === email);
             if (existing) {
                 alert("Account already exists! Please use Existing Login.");
-                document.getElementById('loginIdentifier').value = email;
-                switchAuthTab('login');
-                return;
+                document.getElementById('loginIdentifier').value = email; switchAuthTab('login'); return;
             }
-
             const newAccount = {
-                instName: document.getElementById('regInstName').value.trim(),
-                ownerName: document.getElementById('regOwnerName').value.trim(),
-                email: email,
-                pin: pin,
-                phone: phone,
-                tagline: document.getElementById('regTagline').value.trim() || "Education & Excellence",
-                logo: tempRegLogo || ''
+                instName: document.getElementById('regInstName').value.trim(), ownerName: document.getElementById('regOwnerName').value.trim(),
+                email: email, pin: pin, phone: phone, tagline: document.getElementById('regTagline').value.trim() || "Education & Excellence", logo: tempRegLogo || ''
             };
-
-            allAccounts.push(newAccount);
-            safeSetItem('gsi_accounts', allAccounts);
-            
-            currentAccount = newAccount;
-            safeSetItem('gsi_current_user', currentAccount);
-
-            syncToCloud();
-            alert("Institute Created Successfully with PIN Security!");
-            initApp();
+            allAccounts.push(newAccount); safeSetItem('gsi_accounts', allAccounts);
+            currentAccount = newAccount; safeSetItem('gsi_current_user', currentAccount);
+            syncToCloud(); alert("Institute Created Successfully with PIN Security!"); initApp();
         }
 
         function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginIdentifier').value.trim().toLowerCase();
             const pin = document.getElementById('loginPin').value.trim();
-            
             let found = allAccounts.find(a => a.email === email);
-
-            if (!found) {
-                found = { 
-                    instName: "Fee Manager Pro", 
-                    email: email, 
-                    pin: pin,
-                    phone: "Update via Settings", 
-                    tagline: "Fee Management", 
-                    logo: "" 
-                };
-                allAccounts.push(found);
-                safeSetItem('gsi_accounts', allAccounts);
-            } else if (found.pin && found.pin !== pin) {
-                alert("Incorrect Security PIN! Please enter correct PIN.");
-                return;
-            }
-
-            currentAccount = found;
-            safeSetItem('gsi_current_user', currentAccount);
-            initApp();
-            if (navigator.onLine) {
-                fetchAndMergeCloudData(email, false);
-            }
+            if (!found) { alert("Account not found! Please register first."); return; } 
+            else if (found.pin && found.pin !== pin) { alert("Incorrect Security PIN! Please enter correct PIN."); return; }
+            currentAccount = found; safeSetItem('gsi_current_user', currentAccount);
+            initApp(); if (navigator.onLine) { fetchAndMergeCloudData(email, false); }
         }
 
-        function openChangePinModal() {
-            document.getElementById('pinModal').classList.add('active');
-        }
-
+        function openChangePinModal() { document.getElementById('pinModal').classList.add('active'); }
         function saveNewPin(e) {
             e.preventDefault();
-            const oldPin = document.getElementById('oldPinInput').value.trim();
-            const newPin = document.getElementById('newPinInput').value.trim();
-
-            if (currentAccount.pin && currentAccount.pin !== oldPin) {
-                alert("Current PIN is incorrect!");
-                return;
-            }
-
+            const oldPin = document.getElementById('oldPinInput').value.trim(); const newPin = document.getElementById('newPinInput').value.trim();
+            if (currentAccount.pin && currentAccount.pin !== oldPin) { alert("Current PIN is incorrect!"); return; }
+            if (newPin.length !== 4) { alert("New PIN must be exactly 4 digits!"); return; }
             currentAccount.pin = newPin;
             const idx = allAccounts.findIndex(a => a.email === currentAccount.email);
             if (idx !== -1) allAccounts[idx] = currentAccount;
-            
-            safeSetItem('gsi_accounts', allAccounts);
-            safeSetItem('gsi_current_user', currentAccount);
-            syncToCloud();
-
-            closeModal('pinModal');
-            alert("Security PIN updated successfully in real-time!");
+            safeSetItem('gsi_accounts', allAccounts); safeSetItem('gsi_current_user', currentAccount); syncToCloud();
+            closeModal('pinModal'); alert("Security PIN updated successfully in real-time!"); document.getElementById('pinChangeForm').reset();
         }
 
-        function openForgotPinModal() {
-            document.getElementById('forgotPinModal').classList.add('active');
-        }
-
+        function openForgotPinModal() { document.getElementById('forgotPinModal').classList.add('active'); }
         function resetPin(e) {
             e.preventDefault();
-            const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase();
-            const newPin = document.getElementById('forgotNewPinInput').value.trim();
-
+            const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase(); const newPin = document.getElementById('forgotNewPinInput').value.trim();
             let found = allAccounts.find(a => a.email === email);
-            if (!found) {
-                found = { 
-                    instName: "Fee Manager Pro", 
-                    email: email, 
-                    pin: newPin,
-                    phone: "Update via Settings", 
-                    tagline: "Fee Management", 
-                    logo: "" 
-                };
-                allAccounts.push(found);
-            } else {
-                found.pin = newPin;
-            }
-
-            safeSetItem('gsi_accounts', allAccounts);
-            currentAccount = found;
-            safeSetItem('gsi_current_user', currentAccount);
-
-            closeModal('forgotPinModal');
-            alert("PIN Reset Successful! Logging you in...");
-            initApp();
+            if (!found) { alert("Email not registered!"); return; } else { found.pin = newPin; }
+            safeSetItem('gsi_accounts', allAccounts); currentAccount = found; safeSetItem('gsi_current_user', currentAccount);
+            closeModal('forgotPinModal'); alert("PIN Reset Successful! Logging you in..."); document.getElementById('forgotPinForm').reset(); initApp();
         }
 
         function handleLogout() {
-            if (confirm("क्या आप इस अकाउंट से लॉगआउट करना चाहते हैं?")) {
-                currentAccount = null;
-                try { localStorage.removeItem('gsi_current_user'); } catch(e){}
-                initApp();
-            }
+            if (confirm("क्या आप इस अकाउंट से लॉगआउट करना चाहते हैं?")) { currentAccount = null; try { localStorage.removeItem('gsi_current_user'); } catch(e){} initApp(); }
         }
 
         function deleteEntireAccount() {
             if(confirm("WARNING: This will permanently delete your account and all data from this device! Are you sure?")) {
                 if(confirm("FINAL WARNING: All your offline student records and fee history will be erased! Proceed?")) {
                     if(currentAccount) {
-                        localStorage.removeItem(`gsi_students_${currentAccount.email}`);
-                        localStorage.removeItem(`gsi_payments_${currentAccount.email}`);
-                        localStorage.removeItem(`gsi_deleted_${currentAccount.email}`);
-                        allAccounts = allAccounts.filter(a => a.email !== currentAccount.email);
-                        safeSetItem('gsi_accounts', allAccounts);
+                        localStorage.removeItem(`gsi_students_${currentAccount.email}`); localStorage.removeItem(`gsi_payments_${currentAccount.email}`); localStorage.removeItem(`gsi_deleted_${currentAccount.email}`);
+                        allAccounts = allAccounts.filter(a => a.email !== currentAccount.email); safeSetItem('gsi_accounts', allAccounts);
                     }
-                    localStorage.removeItem('gsi_current_user');
-                    currentAccount = null;
-                    students = [];
-                    payments = [];
-                    alert("Account and Data successfully deleted.");
-                    initApp();
+                    localStorage.removeItem('gsi_current_user'); currentAccount = null; students = []; payments = [];
+                    alert("Account and Data successfully deleted."); initApp();
                 }
             }
         }
 
         function openEditInstModal() {
             if (!currentAccount) return;
-            document.getElementById('editInstName').value = currentAccount.instName;
-            document.getElementById('editOwnerName').value = currentAccount.ownerName || '';
-            document.getElementById('editEmail').value = currentAccount.email || '';
-            document.getElementById('editPhone').value = currentAccount.phone || '';
-            document.getElementById('editTagline').value = currentAccount.tagline || '';
-            tempEditLogo = currentAccount.logo || '';
+            document.getElementById('editInstName').value = currentAccount.instName; document.getElementById('editOwnerName').value = currentAccount.ownerName || '';
+            document.getElementById('editEmail').value = currentAccount.email || ''; document.getElementById('editPhone').value = currentAccount.phone || '';
+            document.getElementById('editTagline').value = currentAccount.tagline || ''; tempEditLogo = currentAccount.logo || '';
             document.getElementById('editLogoBox').innerHTML = tempEditLogo ? `<img src="${tempEditLogo}">` : `<i class="fas fa-camera"></i>`;
             document.getElementById('instModal').classList.add('active');
         }
 
         function saveInstituteSettings(e) {
             e.preventDefault();
-            currentAccount.instName = document.getElementById('editInstName').value.trim();
-            currentAccount.ownerName = document.getElementById('editOwnerName').value.trim();
-            currentAccount.phone = document.getElementById('editPhone').value.trim();
-            currentAccount.tagline = document.getElementById('editTagline').value.trim();
+            currentAccount.instName = document.getElementById('editInstName').value.trim(); currentAccount.ownerName = document.getElementById('editOwnerName').value.trim();
+            currentAccount.phone = document.getElementById('editPhone').value.trim(); currentAccount.tagline = document.getElementById('editTagline').value.trim();
             currentAccount.logo = tempEditLogo || currentAccount.logo || '';
-
             const idx = allAccounts.findIndex(a => a.email === currentAccount.email);
             if (idx !== -1) allAccounts[idx] = currentAccount;
-            safeSetItem('gsi_accounts', allAccounts);
-            safeSetItem('gsi_current_user', currentAccount);
-
-            applyInstituteDetails();
-            closeModal('instModal');
-            syncToCloud();
-            alert("Institute details updated!");
+            safeSetItem('gsi_accounts', allAccounts); safeSetItem('gsi_current_user', currentAccount);
+            applyInstituteDetails(); closeModal('instModal'); syncToCloud(); showInlineMsg('instEditInlineMsg', 'Institute Details Updated!');
         }
 
         function persistData() {
-            if (currentAccount) {
-                safeSetItem(`gsi_students_${currentAccount.email}`, students);
-                safeSetItem(`gsi_payments_${currentAccount.email}`, payments);
-                syncToCloud();
-            }
+            if (currentAccount) { safeSetItem(`gsi_students_${currentAccount.email}`, students); safeSetItem(`gsi_payments_${currentAccount.email}`, payments); syncToCloud(); }
         }
 
-        function openHelpSupport() {
-            alert("Fee Manager Pro Support\n\nOfficial Developer Email:\nofficial.globalstudyinstitute@gmail.com\n\nWe are here to help you!");
-        }
+        function openHelpSupport() { alert("Fee Manager Pro Support\n\nOfficial Developer Email:\nofficial.globalstudyinstitute@gmail.com\n\nWe are here to help you!"); }
 
         function handleBackNavigation() {
             let activeModal = document.querySelector('.modal-overlay.active');
-            if (activeModal) { 
-                activeModal.classList.remove('active'); 
-                return; 
-            }
-            if (document.getElementById('privacyScreen').classList.contains('active')) {
-                switchScreen('settingsScreen'); 
-                return;
-            }
-            if (document.getElementById('profileScreen').classList.contains('active') || 
-                document.getElementById('settingsScreen').classList.contains('active')) {
-                switchScreen('homeScreen'); 
-                return;
-            }
-            if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं?")) {
-                if (navigator.app && navigator.app.exitApp) { 
-                    navigator.app.exitApp(); 
-                } else { 
-                    window.close();
-                }
-            }
+            if (activeModal) { activeModal.classList.remove('active'); return; }
+            if (document.getElementById('privacyScreen').classList.contains('active')) { switchScreen('settingsScreen'); return; }
+            if (document.getElementById('profileScreen').classList.contains('active') || document.getElementById('settingsScreen').classList.contains('active')) { switchScreen('homeScreen'); return; }
+            if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं?")) { if (navigator.app && navigator.app.exitApp) { navigator.app.exitApp(); } else { window.close(); } }
         }
 
-        document.addEventListener("backbutton", function(e) { 
-            e.preventDefault(); 
-            handleBackNavigation(); 
-        }, false);
+        document.addEventListener("backbutton", function(e) { e.preventDefault(); handleBackNavigation(); }, false);
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
-            if (screenId === 'homeScreen') { 
-                curId = null; 
-                renderFilters();
-                renderList(); 
-            }
+            if (screenId === 'homeScreen') { curId = null; renderList(); }
         }
 
         function calcStats() {
             document.getElementById('dashStudents').innerText = students.length;
-            const now = new Date();
-            const currM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+            const now = new Date(); const currM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
             let tRev = 0, mRev = 0;
             payments.forEach(p => {
                 tRev += parseFloat(p.amt || 0);
                 if(p.m === currM) mRev += parseFloat(p.amt || 0);
             });
-            document.getElementById('dashTotalRev').innerText = `₹${tRev}`;
-            document.getElementById('dashMonthRev').innerText = `₹${mRev}`;
-        }
-
-        // ==========================================
-        // NEW FEATURE: BATCH FILTER RENDERING
-        // ==========================================
-        function renderFilters() {
-            const container = document.getElementById('batchFiltersContainer');
-            if (!container) return;
-
-            const uniqueBatches = ["All", ...new Set(students.map(s => s.b).filter(Boolean))];
-            
-            container.innerHTML = uniqueBatches.map(batch => `
-                <div class="filter-chip ${activeBatchFilter === batch ? 'active' : ''}" onclick="setBatchFilter('${batch}')">
-                    ${batch}
-                </div>
-            `).join('');
-        }
-
-        function setBatchFilter(batch) {
-            activeBatchFilter = batch;
-            renderFilters();
-            renderList();
-        }
-
-        // ==========================================
-        // NEW FEATURE: EXCEL (CSV) EXPORT FUNCTION
-        // ==========================================
-        function exportToCSV() {
-            if (!students.length) {
-                alert("No student data available to export!");
-                return;
-            }
-            let csv = "Student ID,Student Name,Father Name,Batch,Phone,Monthly Fee,Admission Date\n";
-            students.forEach(s => {
-                csv += `"${s.code || ''}","${s.n || ''}","${s.fn || ''}","${s.b || ''}","${s.ph || ''}","${s.fee || 0}","${s.ad || ''}"\n`;
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${currentAccount.instName.replace(/\s+/g, '_')}_Students_Data.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            alert("Excel (CSV) Backup Downloaded Successfully!");
+            document.getElementById('dashTotalRev').innerText = `₹${tRev}`; document.getElementById('dashMonthRev').innerText = `₹${mRev}`;
         }
 
         function renderList() {
-            const box = document.getElementById('listContainer');
-            const txt = document.getElementById('searchInput').value.toLowerCase();
-            box.innerHTML = '';
-            
-            // फिक्स क्रमानुसार सॉर्ट करना
-            let sortedStudents = [...students].sort((a, b) => a.id - b.id);
-
-            // बैच फिल्टर अप्लाई करना
-            if (activeBatchFilter !== "All") {
-                sortedStudents = sortedStudents.filter(s => s.b === activeBatchFilter);
-            }
-
-            const filtered = sortedStudents.filter(s => 
-                s.n.toLowerCase().includes(txt) || (s.code && s.code.toLowerCase().includes(txt))
-            );
-
+            const box = document.getElementById('listContainer'); const txt = document.getElementById('searchInput').value.toLowerCase(); box.innerHTML = '';
+            const sortedStudents = [...students].sort((a, b) => a.id - b.id);
+            const filtered = sortedStudents.filter(s => s.n.toLowerCase().includes(txt) || (s.code && s.code.toLowerCase().includes(txt)) || s.b.toLowerCase().includes(txt) );
             if(!filtered.length) {
-                box.innerHTML = `<div style="text-align:center; padding:45px 20px; color:var(--text-muted); font-size:14px;"><p>No Students Found</p></div>`;
-                calcStats(); return;
+                box.innerHTML = `<div style="text-align:center; padding:45px 20px; color:var(--text-muted); font-size:14px;"><p>No Students Found</p></div>`; calcStats(); return;
             }
-
-            filtered.forEach(s => {
-                const av = s.pic ? `<img src="${s.pic}" class="avatar">` : `<div class="avatar">${s.n.charAt(0)}</div>`;
-                const displayCode = s.code ? `<span class="sid-badge">${s.code}</span>` : '';
-                box.innerHTML += `
-                    <div class="student-card" onclick="openProfile(${s.id})">
-                        ${av}
-                        <div class="card-content">
-                            <div class="card-header-row">
-                                <h4>${s.n} ${displayCode}</h4><span style="font-weight:700; color:var(--secondary); font-size:14px;">₹${s.fee}</span>
+            const batches = [...new Set(filtered.map(s => s.b))].sort();
+            batches.forEach(batch => {
+                const batchStudents = filtered.filter(s => s.b === batch);
+                box.innerHTML += `<div class="batch-header"><i class="fas fa-layer-group"></i> Batch: ${batch}</div>`;
+                batchStudents.forEach(s => {
+                    const av = s.pic ? `<img src="${s.pic}" class="avatar">` : `<div class="avatar">${s.n.charAt(0)}</div>`;
+                    const displayCode = s.code ? `<span class="sid-badge">${s.code}</span>` : '';
+                    box.innerHTML += `
+                        <div class="student-card" onclick="openProfile(${s.id})">
+                            ${av}
+                            <div class="card-content">
+                                <div class="card-header-row"><h4>${s.n} ${displayCode}</h4><span style="font-weight:700; color:var(--secondary); font-size:14px;">₹${s.fee}</span></div>
+                                <p>S/o ${s.fn}</p>
                             </div>
-                            <p>S/o ${s.fn}</p>
-                            <span class="batch-badge">${s.b}</span>
-                        </div>
-                    </div>`;
+                        </div>`;
+                });
             });
             calcStats();
         }
 
         function formatDate(dateString) {
-            if (!dateString) return '-';
-            const parts = dateString.split('-');
+            if (!dateString) return '-'; const parts = dateString.split('-');
             if(parts.length === 3) {
                 const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
                 return `${dateObj.getDate()} ${dateObj.toLocaleString('en',{month:'short'})} ${dateObj.getFullYear()}`;
@@ -1255,212 +1018,121 @@
 
         function openProfile(id) {
             curId = id; const s = students.find(x => x.id === id);
-            document.getElementById('pName').innerText = s.n;
-            document.getElementById('pFname').innerText = `S/o ${s.fn}`;
-            document.getElementById('pStuCode').innerText = s.code || 'N/A';
-            document.getElementById('pBatch').innerText = s.b;
-            document.getElementById('pFee').innerText = `₹${s.fee}`;
-            document.getElementById('pPhone').innerText = s.ph;
-            document.getElementById('pDate').innerText = formatDate(s.ad);
-            activePhone = s.ph;
-            
+            document.getElementById('pName').innerText = s.n; document.getElementById('pFname').innerText = `S/o ${s.fn}`;
+            document.getElementById('pStuCode').innerText = s.code || 'N/A'; document.getElementById('pBatch').innerText = s.b;
+            document.getElementById('pFee').innerText = `₹${s.fee}`; document.getElementById('pPhone').innerText = s.ph;
+            document.getElementById('pDate').innerText = formatDate(s.ad); activePhone = s.ph;
             const av = document.getElementById('pAvatar');
             av.innerHTML = s.pic ? `<img src="${s.pic}" style="width:100%; height:100%; border-radius:20px; object-fit:cover;">` : s.n.charAt(0);
-            
-            renderFees();
-            switchScreen('profileScreen');
+            renderFees(); switchScreen('profileScreen');
         }
 
-        function makeCall() {
-            if (activePhone) {
-                const phoneNum = activePhone.replace(/\D/g, '');
-                window.location.href = "tel:" + phoneNum;
-                setTimeout(() => {
-                    window.open("tel:" + phoneNum, "_system");
-                }, 100);
-            } else {
-                alert("Phone number not available!");
-            }
-        }
-
-        function sendWhatsApp() {
-            if (activePhone) {
-                const cleanPhone = activePhone.replace(/\D/g, '').slice(-10);
-                const waUrl = "https://wa.me/91" + cleanPhone;
-                window.location.href = waUrl;
-                setTimeout(() => {
-                    window.open(waUrl, "_system");
-                }, 100);
-            } else {
-                alert("Phone number not available!");
-            }
-        }
+        function makeCall() { if (activePhone) { const phoneNum = activePhone.replace(/\D/g, ''); window.location.href = "tel:" + phoneNum; } else { alert("Phone number not available!"); } }
+        function sendWhatsApp() { if (activePhone) { const cleanPhone = activePhone.replace(/\D/g, '').slice(-10); window.location.href = "https://wa.me/91" + cleanPhone; } else { alert("Phone number not available!"); } }
 
         function renderFees() {
             const box = document.getElementById('paymentsList'); box.innerHTML = '';
             const sp = payments.filter(p => p.sid === curId).sort((a, b) => new Date(a.pDate) - new Date(b.pDate));
             if(!sp.length) { box.innerHTML = `<p style="text-align:center; color:#94A3B8; padding:20px; font-size:13px;">No fees recorded</p>`; return; }
             
-            let runningBalance = 0; 
-            const processedList = [];
-
+            let runningBalance = 0; const processedList = [];
             sp.forEach(p => {
-                const base = parseFloat(p.baseFee || 0);
-                const disc = parseFloat(p.disc || 0);
-                const netPayable = Math.max(0, base - disc);
-                const paid = parseFloat(p.amt || 0);
-
-                const diff = paid - netPayable;
-                runningBalance += diff;
-
-                let itemDue = 0;
-                let itemAdv = 0;
-
-                if (runningBalance < 0) {
-                    itemDue = Math.abs(runningBalance);
-                } else if (runningBalance > 0) {
-                    itemAdv = runningBalance;
-                }
-
+                const base = parseFloat(p.baseFee || 0); const disc = parseFloat(p.disc || 0); const netPayable = Math.max(0, base - disc); const paid = parseFloat(p.amt || 0);
+                const diff = paid - netPayable; runningBalance += diff;
+                let itemDue = 0; let itemAdv = 0;
+                if (runningBalance < 0) { itemDue = Math.abs(runningBalance); } else if (runningBalance > 0) { itemAdv = runningBalance; }
                 processedList.push({ ...p, calculatedDue: itemDue, calculatedAdv: itemAdv });
             });
 
             processedList.reverse().forEach(p => {
-                const [y, m] = p.m.split('-');
-                const mName = new Date(y, m-1).toLocaleString('en', {month:'short'});
-                const payDateStr = formatDate(p.pDate);
-                const dueAmt = p.calculatedDue;
-                const advAmt = p.calculatedAdv;
-                const discAmt = parseFloat(p.disc || 0);
-                
-                let badgeHtml = '';
-                let amtClass = '';
-                let subAmtHtml = '';
+                const [y, m] = p.m.split('-'); const mName = new Date(y, m-1).toLocaleString('en', {month:'short'}); const payDateStr = formatDate(p.pDate);
+                const dueAmt = p.calculatedDue; const advAmt = p.calculatedAdv; const discAmt = parseFloat(p.disc || 0);
+                let badgeHtml = ''; let amtClass = ''; let subAmtHtml = '';
 
                 if (dueAmt > 0) {
                     badgeHtml = `<span class="badge-status due"><i class="fas fa-exclamation-circle"></i> Due: ₹${dueAmt}</span>`;
-                    amtClass = 'has-due';
-                    subAmtHtml = `<div style="font-size:11px; font-weight:700; color:var(--danger); margin-top:2px;">Due: ₹${dueAmt}</div>`;
+                    amtClass = 'has-due'; subAmtHtml = `<div style="font-size:11px; font-weight:700; color:var(--danger); margin-top:2px;">Due: ₹${dueAmt}</div>`;
                 } else if (advAmt > 0) {
                     badgeHtml = `<span class="badge-status advance"><i class="fas fa-arrow-circle-up"></i> Adv: ₹${advAmt}</span>`;
-                    amtClass = 'has-adv';
-                    subAmtHtml = `<div style="font-size:11px; font-weight:700; color:var(--info); margin-top:2px;">Adv: +₹${advAmt}</div>`;
+                    amtClass = 'has-adv'; subAmtHtml = `<div style="font-size:11px; font-weight:700; color:var(--info); margin-top:2px;">Adv: +₹${advAmt}</div>`;
                 } else {
                     badgeHtml = `<span class="badge-status paid"><i class="fas fa-check"></i> Fully Paid</span>`;
                 }
-
                 const extraInfo = discAmt > 0 ? ` • Disc: ₹${discAmt}` : '';
                 box.innerHTML += `
                     <div class="payment-card">
                         <div class="pay-header">
                             <div class="pay-info">
-                                <div class="pay-icon ${dueAmt > 0 ? 'partial' : (advAmt > 0 ? 'advance' : '')}">
-                                    <i class="fas ${dueAmt > 0 ? 'fa-clock' : (advAmt > 0 ? 'fa-wallet' : 'fa-check')}"></i>
-                                </div>
-                                <div class="pay-text">
-                                    <h5>${mName} ${y} Fee</h5>
-                                    <p>${payDateStr} • ${p.md}${extraInfo}</p>
-                                    ${badgeHtml}
-                                </div>
+                                <div class="pay-icon ${dueAmt > 0 ? 'partial' : (advAmt > 0 ? 'advance' : '')}"><i class="fas ${dueAmt > 0 ? 'fa-clock' : (advAmt > 0 ? 'fa-wallet' : 'fa-check')}"></i></div>
+                                <div class="pay-text"><h5>${mName} ${y} Fee</h5><p>${payDateStr} • ${p.md}${extraInfo}</p>${badgeHtml}</div>
                             </div>
                             <div class="pay-amt ${amtClass}">+₹${p.amt}${subAmtHtml}</div>
                         </div>
                         <div class="pay-actions">
-                            <button onclick="openFeeModal(${p.id})" class="btn-sm edit"><i class="fas fa-pen"></i> Edit</button>
+                            <button onclick="openFeeModal(${p.id})" class="btn-sm edit"><i class="fas fa-pen"></i></button>
                             <button onclick="deleteFee(${p.id})" class="btn-sm delete"><i class="fas fa-trash"></i></button>
-                            <button onclick="generateFastPDFReceipt(${p.id})" class="btn-sm share"><i class="fas fa-file-pdf"></i> PDF Receipt</button>
+                            <!-- SHARE BUTTON INSTEAD OF DIRECT DOWNLOAD -->
+                            <button onclick="generateFastPDFReceipt(${p.id})" class="btn-sm share"><i class="fas fa-file-pdf"></i> View / Share PDF</button>
                         </div>
                     </div>`;
             });
         }
 
         function recalcPayment() {
-            const base = parseFloat(document.getElementById('fBaseFee').value) || 0;
-            const disc = parseFloat(document.getElementById('fDiscount').value) || 0;
-            const paid = parseFloat(document.getElementById('fAmount').value) || 0;
-            const payable = Math.max(0, base - disc);
-            
-            if (paid >= payable) {
-                document.getElementById('fDue').value = 0;
-                document.getElementById('fAdv').value = paid - payable;
-            } else {
-                document.getElementById('fDue').value = payable - paid;
-                document.getElementById('fAdv').value = 0;
-            }
+            const base = parseFloat(document.getElementById('fBaseFee').value) || 0; const disc = parseFloat(document.getElementById('fDiscount').value) || 0;
+            const paid = parseFloat(document.getElementById('fAmount').value) || 0; const payable = Math.max(0, base - disc);
+            if (paid >= payable) { document.getElementById('fDue').value = 0; document.getElementById('fAdv').value = paid - payable; } 
+            else { document.getElementById('fDue').value = payable - paid; document.getElementById('fAdv').value = 0; }
         }
 
         // ==========================================
-        // PROFESSIONAL FULL-FEATURED PDF RECEIPT GENERATOR
+        // 2. RECEIPT FILE NAME FIX 
         // ==========================================
         function generateFastPDFReceipt(paymentId) {
-            const p = payments.find(x => x.id === paymentId);
-            if (!p) return;
-            const s = students.find(x => x.id === p.sid);
-            if (!s) return;
-            const [y, m] = p.m.split('-');
-            const mName = new Date(y, m-1).toLocaleString('en', {month:'long'});
+            const p = payments.find(x => x.id === paymentId); if (!p) return;
+            const s = students.find(x => x.id === p.sid); if (!s) return;
+            const [y, m] = p.m.split('-'); const mName = new Date(y, m-1).toLocaleString('en', {month:'long'});
 
             const { jsPDF } = window.jspdf;
-            if (!jsPDF) {
-                alert("PDF Library not loaded yet, please try again.");
-                return;
-            }
+            if (!jsPDF) { alert("PDF Library loading, please wait 2 seconds and try again."); return; }
 
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [100, 150] });
 
-            doc.setFillColor(30, 58, 138);
-            doc.rect(0, 0, 100, 3.5, 'F');
-
+            doc.setFillColor(30, 58, 138); doc.rect(0, 0, 100, 3.5, 'F');
             let curY = 7.5;
-            if (currentAccount && currentAccount.logo) {
-                try { doc.addImage(currentAccount.logo, 'JPEG', 43, curY, 14, 14); curY += 17; } catch(e) { curY += 2; }
-            } else { curY += 2; }
+            if (currentAccount && currentAccount.logo) { try { doc.addImage(currentAccount.logo, 'JPEG', 43, curY, 14, 14); curY += 17; } catch(e) { curY += 2; } } else { curY += 2; }
 
             const instTitle = (currentAccount && currentAccount.instName) ? currentAccount.instName.toUpperCase() : "FEE MANAGER PRO";
             const instPhone = (currentAccount && currentAccount.phone) ? currentAccount.phone : "Contact Institute";
             const instTag = (currentAccount && currentAccount.tagline) ? currentAccount.tagline : "Official Fee Receipt";
 
-            doc.setTextColor(30, 58, 138); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
-            doc.text(instTitle, 50, curY, { align: "center" });
-
-            doc.setFontSize(7.5); doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "bold");
-            doc.text("FEE PAYMENT RECEIPT", 50, curY + 4, { align: "center" });
-            
-            doc.setFont("helvetica", "normal"); doc.setFontSize(6.8);
-            doc.text(`Contact: +91 ${instPhone} | ${instTag}`, 50, curY + 7.5, { align: "center" });
-
-            doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.3);
-            doc.line(8, curY + 10, 92, curY + 10);
+            doc.setTextColor(30, 58, 138); doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text(instTitle, 50, curY, { align: "center" });
+            doc.setFontSize(7.5); doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "bold"); doc.text("FEE PAYMENT RECEIPT", 50, curY + 4, { align: "center" });
+            doc.setFont("helvetica", "normal"); doc.setFontSize(6.8); doc.text(`Contact: +91 ${instPhone} | ${instTag}`, 50, curY + 7.5, { align: "center" });
+            doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.3); doc.line(8, curY + 10, 92, curY + 10);
 
             let metaY = curY + 14;
             doc.setFontSize(7.2); doc.setTextColor(100, 116, 139);
-            doc.text(`Receipt: #TXN${p.id.toString().slice(-6)}`, 8, metaY);
-            doc.text(`Date: ${formatDate(p.pDate)}`, 92, metaY, { align: "right" });
+            doc.text(`Receipt: #TXN${p.id.toString().slice(-6)}`, 8, metaY); doc.text(`Date: ${formatDate(p.pDate)}`, 92, metaY, { align: "right" });
 
             let card1Y = metaY + 2.5;
             doc.setFillColor(248, 250, 252); doc.roundedRect(8, card1Y, 84, 28, 2, 2, 'F');
             doc.setDrawColor(226, 232, 240); doc.roundedRect(8, card1Y, 84, 28, 2, 2, 'D');
 
             const addCompactRow = (lbl, val, rowY) => {
-                doc.setFontSize(7.2); doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "normal");
-                doc.text(lbl, 11, rowY);
-                doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold");
-                doc.text(String(val), 38, rowY);
+                doc.setFontSize(7.2); doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "normal"); doc.text(lbl, 11, rowY);
+                doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold"); doc.text(String(val), 38, rowY);
             };
 
-            addCompactRow("Student ID:", s.code || 'N/A', card1Y + 5.5);
-            addCompactRow("Student Name:", s.n, card1Y + 11);
-            addCompactRow("Father's Name:", s.fn, card1Y + 16.5);
-            addCompactRow("Batch / Phone:", `${s.b}  |  +91 ${s.ph}`, card1Y + 22);
+            addCompactRow("Student ID:", s.code || 'N/A', card1Y + 5.5); addCompactRow("Student Name:", s.n, card1Y + 11);
+            addCompactRow("Father's Name:", s.fn, card1Y + 16.5); addCompactRow("Batch / Phone:", `${s.b}  |  +91 ${s.ph}`, card1Y + 22);
 
             let card2Y = card1Y + 31;
             doc.setFillColor(241, 245, 249); doc.roundedRect(8, card2Y, 84, 24, 2, 2, 'F');
             doc.setDrawColor(203, 213, 225); doc.roundedRect(8, card2Y, 84, 24, 2, 2, 'D');
 
             doc.setFontSize(7.8); doc.setTextColor(30, 58, 138); doc.setFont("helvetica", "bold");
-            doc.text(`Fee Period: ${mName} ${y}`, 11, card2Y + 5.5);
-            doc.text(`Mode: ${p.md}`, 89, card2Y + 5.5, { align: "right" });
-
+            doc.text(`Fee Period: ${mName} ${y}`, 11, card2Y + 5.5); doc.text(`Mode: ${p.md}`, 89, card2Y + 5.5, { align: "right" });
             doc.setDrawColor(226, 232, 240); doc.line(11, card2Y + 7.5, 89, card2Y + 7.5);
 
             doc.setFontSize(7.2); doc.setFont("helvetica", "normal"); doc.setTextColor(100, 116, 139);
@@ -1471,236 +1143,118 @@
             const netPayable = (parseFloat(p.baseFee || s.fee) - parseFloat(p.disc || 0));
             doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold"); doc.text(`Rs. ${netPayable}`, 89, card2Y + 21, { align: "right" });
 
-            let card3Y = card2Y + 27;
-            const dueAmt = parseFloat(p.due || 0);
-            const advAmt = parseFloat(p.adv || 0);
+            let card3Y = card2Y + 27; const dueAmt = parseFloat(p.due || 0); const advAmt = parseFloat(p.adv || 0);
 
             doc.setFillColor(30, 58, 138); doc.roundedRect(8, card3Y, 84, 15, 2, 2, 'F');
-            doc.setTextColor(219, 234, 254); doc.setFontSize(7.2); doc.setFont("helvetica", "normal");
-            doc.text("Amount Received:", 12, card3Y + 5.5);
-
-            doc.setTextColor(253, 224, 71); doc.setFontSize(11); doc.setFont("helvetica", "bold");
-            doc.text(`Rs. ${p.amt}`, 12, card3Y + 11.5);
+            doc.setTextColor(219, 234, 254); doc.setFontSize(7.2); doc.setFont("helvetica", "normal"); doc.text("Amount Received:", 12, card3Y + 5.5);
+            doc.setTextColor(253, 224, 71); doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.text(`Rs. ${p.amt}`, 12, card3Y + 11.5);
 
             if (dueAmt > 0) {
                 doc.setFillColor(220, 38, 38); doc.roundedRect(54, card3Y + 3.8, 34, 7.5, 1.5, 1.5, 'F');
-                doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont("helvetica", "bold");
-                doc.text(`DUE: Rs. ${dueAmt}`, 71, card3Y + 8.8, { align: "center" });
+                doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.text(`DUE: Rs. ${dueAmt}`, 71, card3Y + 8.8, { align: "center" });
             } else if (advAmt > 0) {
                 doc.setFillColor(2, 132, 199); doc.roundedRect(52, card3Y + 3.8, 36, 7.5, 1.5, 1.5, 'F');
-                doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont("helvetica", "bold");
-                doc.text(`ADVANCE: +Rs. ${advAmt}`, 70, card3Y + 8.8, { align: "center" });
+                doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.text(`ADVANCE: +Rs. ${advAmt}`, 70, card3Y + 8.8, { align: "center" });
             } else {
                 doc.setFillColor(5, 150, 105); doc.roundedRect(58, card3Y + 3.8, 30, 7.5, 1.5, 1.5, 'F');
-                doc.setTextColor(255, 255, 255); doc.setFontSize(7.2); doc.setFont("helvetica", "bold");
-                doc.text("FULLY PAID", 73, card3Y + 8.8, { align: "center" });
+                doc.setTextColor(255, 255, 255); doc.setFontSize(7.2); doc.setFont("helvetica", "bold"); doc.text("FULLY PAID", 73, card3Y + 8.8, { align: "center" });
             }
 
             let footY = card3Y + 20;
-            doc.setTextColor(148, 163, 184); doc.setFontSize(6.2); doc.setFont("helvetica", "normal");
-            doc.text("System Generated Receipt", 8, footY + 1);
-
+            doc.setTextColor(148, 163, 184); doc.setFontSize(6.2); doc.setFont("helvetica", "normal"); doc.text("System Generated Receipt", 8, footY + 1);
             doc.setDrawColor(203, 213, 225); doc.line(65, footY - 1, 92, footY - 1);
-            doc.setTextColor(71, 85, 105); doc.setFontSize(6.8); doc.setFont("helvetica", "bold");
-            doc.text("Authorized Signatory", 78.5, footY + 2.5, { align: "center" });
+            doc.setTextColor(71, 85, 105); doc.setFontSize(6.8); doc.setFont("helvetica", "bold"); doc.text("Authorized Signatory", 78.5, footY + 2.5, { align: "center" });
 
-            const cleanStudentName = s.n.replace(/[^a-zA-Z0-9]/g, '_');
+            // File Name Set Properly: [Student Name]_[Month]_[Year]_Receipt.pdf
+            const cleanStudentName = s.n.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
             const fileName = `${cleanStudentName}_${mName}_${y}_Receipt.pdf`;
 
             const pdfBlob = doc.output('blob');
-            const pdfUrl = URL.createObjectURL(pdfBlob);
-            
-            const downloadLink = document.createElement('a');
-            downloadLink.href = pdfUrl;
-            downloadLink.download = fileName;
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
+            const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({ title: 'Student Fee Receipt', files: [file] })
+                .catch(() => fallbackDownload(pdfBlob, fileName));
+            } else { fallbackDownload(pdfBlob, fileName); }
         }
 
         function generateAutoStudentID() {
-            const now = new Date();
-            const yy = String(now.getFullYear()).slice(-2);
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const now = new Date(); const yy = String(now.getFullYear()).slice(-2); const mm = String(now.getMonth() + 1).padStart(2, '0');
             return `${yy}${mm}${String(students.length + 1).padStart(2, '0')}`;
         }
 
         function saveStudent(e) {
             e.preventDefault();
             const sid = document.getElementById('sId').value;
-            let rawPhone = document.getElementById('sPhone').value.replace(/\D/g, ''); 
-            let cleanPhone = rawPhone.length > 10 ? rawPhone.slice(-10) : rawPhone;
-            
+            let rawPhone = document.getElementById('sPhone').value.replace(/\D/g, ''); let cleanPhone = rawPhone.length > 10 ? rawPhone.slice(-10) : rawPhone;
             const ns = {
-                id: sid ? parseInt(sid) : Date.now(),
-                code: document.getElementById('sCode').value || generateAutoStudentID(),
-                n: document.getElementById('sName').value,
-                fn: document.getElementById('sFname').value,
-                ph: cleanPhone,
-                b: document.getElementById('sBatch').value,
-                ad: document.getElementById('sDate').value,
-                fee: document.getElementById('sFee').value,
-                pic: document.getElementById('sPhotoStr').value
+                id: sid ? parseInt(sid) : Date.now(), code: document.getElementById('sCode').value || generateAutoStudentID(),
+                n: document.getElementById('sName').value, fn: document.getElementById('sFname').value, ph: cleanPhone,
+                b: document.getElementById('sBatch').value, ad: document.getElementById('sDate').value,
+                fee: document.getElementById('sFee').value, pic: document.getElementById('sPhotoStr').value
             };
-            
-            if(sid) { 
-                const index = students.findIndex(x => x.id == sid);
-                ns.code = students[index].code || ns.code;
-                students[index] = ns; 
-            } else { 
-                students.push(ns); 
-            }
-            
-            persistData();
-            closeModal('studentModal');
-            sid ? openProfile(parseInt(sid)) : renderList();
+            if(sid) { const index = students.findIndex(x => x.id == parseInt(sid)); ns.code = students[index].code || ns.code; students[index] = ns; } else { students.push(ns); }
+            persistData(); closeModal('studentModal'); sid ? openProfile(parseInt(sid)) : renderList();
         }
 
         function saveFee(e) {
-            e.preventDefault();
-            const fid = document.getElementById('fId').value;
-            
+            e.preventDefault(); const fid = document.getElementById('fId').value;
             const feeData = {
-                id: fid ? parseInt(fid) : Date.now(), 
-                sid: curId,
-                m: document.getElementById('fMonth').value,
-                pDate: document.getElementById('fPayDate').value,
-                baseFee: document.getElementById('fBaseFee').value,
-                disc: document.getElementById('fDiscount').value || 0,
-                amt: document.getElementById('fAmount').value,
-                due: document.getElementById('fDue').value || 0,
-                adv: document.getElementById('fAdv').value || 0,
-                md: document.getElementById('fMode').value
+                id: fid ? parseInt(fid) : Date.now(), sid: curId, m: document.getElementById('fMonth').value,
+                pDate: document.getElementById('fPayDate').value, baseFee: document.getElementById('fBaseFee').value,
+                disc: document.getElementById('fDiscount').value || 0, amt: document.getElementById('fAmount').value,
+                due: document.getElementById('fDue').value || 0, adv: document.getElementById('fAdv').value || 0, md: document.getElementById('fMode').value
             };
-
-            if(fid) {
-                const index = payments.findIndex(p => p.id === parseInt(fid));
-                payments[index] = feeData;
-            } else {
-                payments.push(feeData);
-            }
-
-            persistData();
-            closeModal('paymentModal'); 
-            renderFees();
+            if(fid) { const index = payments.findIndex(p => p.id === parseInt(fid)); payments[index] = feeData; } else { payments.push(feeData); }
+            persistData(); closeModal('paymentModal'); renderFees();
         }
 
-        function deleteFee(feeId) {
-            if(confirm("Are you sure you want to delete this payment record?")) {
-                payments = payments.filter(p => p.id !== feeId);
-                persistData();
-                renderFees();
-            }
-        }
+        function deleteFee(feeId) { if(confirm("Are you sure you want to delete this payment record?")) { payments = payments.filter(p => p.id !== feeId); persistData(); renderFees(); } }
 
         function deleteStudent() {
             if(confirm("Permanently delete this student & all fee records?")) {
                 if (currentAccount) {
                     let deletedIds = safeGetItem(`gsi_deleted_${currentAccount.email}`, []);
-                    if (!deletedIds.includes(curId)) {
-                        deletedIds.push(curId);
-                        safeSetItem(`gsi_deleted_${currentAccount.email}`, deletedIds);
-                    }
+                    if (!deletedIds.includes(curId)) { deletedIds.push(curId); safeSetItem(`gsi_deleted_${currentAccount.email}`, deletedIds); syncToCloud(); }
                 }
-                students = students.filter(s => s.id !== curId);
-                payments = payments.filter(p => p.sid !== curId);
-                persistData();
-                switchScreen('homeScreen');
+                students = students.filter(s => s.id !== curId); payments = payments.filter(p => p.sid !== curId);
+                persistData(); switchScreen('homeScreen');
             }
-        }
-
-        function exportData() {
-            if (!currentAccount) return;
-            const data = { account: currentAccount, students: students, payments: payments };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = `${currentAccount.instName.replace(/\s+/g, '_')}_Backup.json`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            alert("Backup Downloaded!");
-        }
-
-        function importData(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                try {
-                    const data = JSON.parse(ev.target.result);
-                    if(data.students && data.payments) {
-                        students = data.students; 
-                        payments = data.payments;
-                        if (data.account) { currentAccount = data.account; safeSetItem('gsi_current_user', currentAccount); }
-                        persistData();
-                        alert("Data Restored Successfully!");
-                        initApp();
-                    }
-                } catch(err) { alert("Invalid Backup File!"); }
-            };
-            reader.readAsText(file);
         }
 
         function openStudentModal(mode) {
             document.getElementById('studentModal').classList.add('active');
-            const frm = document.getElementById('studentForm');
-            const title = document.getElementById('studentModalTitle');
-            const btn = document.getElementById('studentSubmitBtn');
-            
+            const frm = document.getElementById('studentForm'); const title = document.getElementById('studentModalTitle'); const btn = document.getElementById('studentSubmitBtn');
             if(mode === 'edit') {
-                title.innerText = "Edit Profile"; btn.innerText = "Update Profile";
-                const s = students.find(x => x.id === curId);
-                document.getElementById('sId').value = s.id;
-                document.getElementById('sCode').value = s.code || generateAutoStudentID();
-                document.getElementById('sName').value = s.n;
-                document.getElementById('sFname').value = s.fn;
-                document.getElementById('sPhone').value = s.ph;
-                document.getElementById('sBatch').value = s.b;
-                document.getElementById('sDate').value = s.ad;
-                document.getElementById('sFee').value = s.fee;
-                document.getElementById('sPhotoStr').value = s.pic || '';
-                document.getElementById('imgBox').innerHTML = s.pic ? `<img src="${s.pic}">` : `<i class="fas fa-camera"></i>`;
+                title.innerText = "Edit Profile"; btn.innerText = "Update Profile"; const s = students.find(x => x.id === curId);
+                document.getElementById('sId').value = s.id; document.getElementById('sCode').value = s.code || generateAutoStudentID();
+                document.getElementById('sName').value = s.n; document.getElementById('sFname').value = s.fn;
+                document.getElementById('sPhone').value = s.ph; document.getElementById('sBatch').value = s.b;
+                document.getElementById('sDate').value = s.ad; document.getElementById('sFee').value = s.fee;
+                document.getElementById('sPhotoStr').value = s.pic || ''; document.getElementById('imgBox').innerHTML = s.pic ? `<img src="${s.pic}">` : `<i class="fas fa-camera"></i>`;
             } else {
-                frm.reset();
-                document.getElementById('sId').value = '';
-                document.getElementById('sCode').value = generateAutoStudentID();
-                document.getElementById('sPhotoStr').value = '';
-                document.getElementById('imgBox').innerHTML = `<i class="fas fa-camera"></i>`;
+                frm.reset(); document.getElementById('sId').value = ''; document.getElementById('sCode').value = generateAutoStudentID();
+                document.getElementById('sPhotoStr').value = ''; document.getElementById('imgBox').innerHTML = `<i class="fas fa-camera"></i>`;
                 title.innerText = "Add Student"; btn.innerText = "Save Profile";
-                const d = new Date();
-                document.getElementById('sDate').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                const d = new Date(); document.getElementById('sDate').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
             }
         }
 
         function openFeeModal(feeId = null) {
             document.getElementById('paymentModal').classList.add('active');
-            const frm = document.getElementById('feeForm');
-            const title = document.getElementById('feeModalTitle');
-            const btn = document.getElementById('feeSubmitBtn');
+            const frm = document.getElementById('feeForm'); const title = document.getElementById('feeModalTitle'); const btn = document.getElementById('feeSubmitBtn');
             const s = students.find(x => x.id === curId);
-            
             if (feeId) {
-                title.innerText = "Edit Fee Record"; btn.innerText = "Update Payment";
-                const p = payments.find(x => x.id === feeId);
-                document.getElementById('fId').value = p.id;
-                document.getElementById('fMonth').value = p.m;
-                document.getElementById('fPayDate').value = p.pDate;
-                document.getElementById('fBaseFee').value = p.baseFee || s.fee;
-                document.getElementById('fDiscount').value = p.disc || 0;
-                document.getElementById('fAmount').value = p.amt;
-                document.getElementById('fDue').value = p.due || 0;
-                document.getElementById('fAdv').value = p.adv || 0;
-                document.getElementById('fMode').value = p.md;
+                title.innerText = "Edit Fee Record"; btn.innerText = "Update Payment"; const p = payments.find(x => x.id === feeId);
+                document.getElementById('fId').value = p.id; document.getElementById('fMonth').value = p.m; document.getElementById('fPayDate').value = p.pDate;
+                document.getElementById('fBaseFee').value = p.baseFee || s.fee; document.getElementById('fDiscount').value = p.disc || 0;
+                document.getElementById('fAmount').value = p.amt; document.getElementById('fDue').value = p.due || 0;
+                document.getElementById('fAdv').value = p.adv || 0; document.getElementById('fMode').value = p.md;
             } else {
-                frm.reset();
-                title.innerText = "Record Fee"; btn.innerText = "Confirm Payment";
-                document.getElementById('fId').value = '';
-                document.getElementById('fBaseFee').value = s.fee;
-                document.getElementById('fDiscount').value = 0;
-                document.getElementById('fAmount').value = s.fee;
-                document.getElementById('fDue').value = 0;
-                document.getElementById('fAdv').value = 0;
-                const d = new Date();
-                document.getElementById('fMonth').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                frm.reset(); title.innerText = "Record Fee"; btn.innerText = "Confirm Payment";
+                document.getElementById('fId').value = ''; document.getElementById('fBaseFee').value = s.fee; document.getElementById('fDiscount').value = 0;
+                document.getElementById('fAmount').value = s.fee; document.getElementById('fDue').value = 0; document.getElementById('fAdv').value = 0;
+                const d = new Date(); document.getElementById('fMonth').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
                 document.getElementById('fPayDate').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
             }
         }
