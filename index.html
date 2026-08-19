@@ -760,21 +760,12 @@
                 showInlineMsg('exportInlineMsg', 'No Student Data to Export!'); return;
             }
 
-            // Added Double Quotes to all headers to prevent Excel scattering
             let csvContent = '"Student ID","Student Name","Father\'s Name","Phone","Batch/Class","Admission Date","Base Monthly Fee (Rs.)","Total Collected (Rs.)","Current Due (Rs.)","Current Advance (Rs.)","Last Payment Date"\n';
-            
             const sortedStudents = [...students].sort((a, b) => a.id - b.id);
             
             sortedStudents.forEach(s => {
-                // Formatting text to avoid breaking quotes
-                const cleanName = s.n.replace(/"/g, '""'); 
-                const cleanFname = s.fn.replace(/"/g, '""');
-                
-                // Calculating Financial History for Export
-                let totalCollected = 0;
-                let runningBalance = 0; 
-                let lastPaymentDate = "No Payment";
-
+                const cleanName = s.n.replace(/"/g, '""'); const cleanFname = s.fn.replace(/"/g, '""');
+                let totalCollected = 0; let runningBalance = 0; let lastPaymentDate = "No Payment";
                 const studentPayments = payments.filter(p => p.sid === s.id).sort((a, b) => new Date(a.pDate) - new Date(b.pDate));
                 
                 studentPayments.forEach(p => {
@@ -783,14 +774,10 @@
                     runningBalance += (parseFloat(p.amt || 0) - payable);
                 });
 
-                if (studentPayments.length > 0) {
-                    lastPaymentDate = formatDate(studentPayments[studentPayments.length - 1].pDate);
-                }
-
+                if (studentPayments.length > 0) { lastPaymentDate = formatDate(studentPayments[studentPayments.length - 1].pDate); }
                 let currentDue = runningBalance < 0 ? Math.abs(runningBalance) : 0;
                 let currentAdv = runningBalance > 0 ? runningBalance : 0;
 
-                // Wrapping every value in Double Quotes "" so commas/spaces don't split columns
                 csvContent += `"${s.code}","${cleanName}","${cleanFname}","${s.ph}","${s.b}","${s.ad}","${s.fee}","${totalCollected}","${currentDue}","${currentAdv}","${lastPaymentDate}"\n`;
             });
 
@@ -799,27 +786,16 @@
             const file = new File([blob], fileName, { type: 'text/csv' });
 
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    title: 'Student Financial Report',
-                    files: [file]
-                }).then(() => {
-                    showInlineMsg('exportInlineMsg', 'Share Menu Opened Successfully!');
-                }).catch((error) => {
-                    fallbackDownload(blob, fileName, 'exportInlineMsg');
-                });
-            } else {
-                fallbackDownload(blob, fileName, 'exportInlineMsg');
-            }
+                navigator.share({ title: 'Student Financial Report', files: [file] })
+                .then(() => { showInlineMsg('exportInlineMsg', 'Share Menu Opened Successfully!'); })
+                .catch(() => { fallbackDownload(blob, fileName, 'exportInlineMsg'); });
+            } else { fallbackDownload(blob, fileName, 'exportInlineMsg'); }
         }
 
         function fallbackDownload(blob, fileName, msgId) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const url = URL.createObjectURL(blob); const a = document.createElement("a");
+            a.href = url; a.download = fileName; document.body.appendChild(a);
+            a.click(); document.body.removeChild(a);
             if(msgId) showInlineMsg(msgId, 'File Request Sent to Browser!');
         }
 
@@ -856,17 +832,53 @@
             }
         }
 
+        // ==========================================
+        // 3. SECURE REGISTER & LOGIN (PREVENT OVERWRITE BUGS & FETCH CLOUD DATA)
+        // ==========================================
         function handleRegister(e) {
             e.preventDefault();
             const email = document.getElementById('regEmail').value.trim().toLowerCase();
             const phone = document.getElementById('regPhone').value.trim();
             const pin = document.getElementById('regPin').value.trim();
-            if (pin.length !== 4) { alert("PIN must be exactly 4 digits!"); return; }
-            const existing = allAccounts.find(a => a.email === email);
-            if (existing) {
-                alert("Account already exists! Please use Existing Login.");
-                document.getElementById('loginIdentifier').value = email; switchAuthTab('login'); return;
+            const btn = document.getElementById('btnRegisterSubmit');
+
+            if (pin.length !== 4) { alert("PIN 4 अंकों का होना चाहिए!"); return; }
+
+            const existingIndex = allAccounts.findIndex(a => a.email === email);
+            if (existingIndex !== -1) {
+                if(!confirm("यह अकाउंट पहले से मौजूद है! क्या आप इसे नए सिरे से रजिस्टर करके पुराना डेटा Overwrite (मिटाना) चाहते हैं? \n\nपुराना डेटा वापस पाने के लिए 'Cancel' दबाएं और 'Existing Login' करें।")) {
+                    document.getElementById('loginIdentifier').value = email; switchAuthTab('login'); return;
+                }
+                allAccounts.splice(existingIndex, 1);
             }
+
+            if (navigator.onLine) {
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Checking Cloud...`;
+                btn.disabled = true;
+                
+                fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        btn.innerHTML = `<i class="fas fa-check-circle"></i> Create Institute & Start`;
+                        btn.disabled = false;
+                        
+                        if (data && data.status === 'success' && data.payload && data.payload.account) {
+                            if(!confirm("यह ईमेल Cloud (Google Drive) पर पहले से सेव है! \n\nनया अकाउंट बनाने और पुराना डेटा डिलीट करने के लिए 'OK' दबाएं। \nपुराना डेटा वापस लाने के लिए 'Cancel' दबाएं।")) {
+                                document.getElementById('loginIdentifier').value = email; switchAuthTab('login');
+                                return;
+                            }
+                        }
+                        proceedRegister(email, phone, pin);
+                    })
+                    .catch(() => {
+                        btn.innerHTML = `<i class="fas fa-check-circle"></i> Create Institute & Start`;
+                        btn.disabled = false;
+                        proceedRegister(email, phone, pin);
+                    });
+            } else { proceedRegister(email, phone, pin); }
+        }
+
+        function proceedRegister(email, phone, pin) {
             const newAccount = {
                 instName: document.getElementById('regInstName').value.trim(), ownerName: document.getElementById('regOwnerName').value.trim(),
                 email: email, pin: pin, phone: phone, tagline: document.getElementById('regTagline').value.trim() || "Education & Excellence", logo: tempRegLogo || ''
@@ -880,11 +892,52 @@
             e.preventDefault();
             const email = document.getElementById('loginIdentifier').value.trim().toLowerCase();
             const pin = document.getElementById('loginPin').value.trim();
+            const btn = document.getElementById('btnLoginSubmit');
+            
             let found = allAccounts.find(a => a.email === email);
-            if (!found) { alert("Account not found! Please register first."); return; } 
-            else if (found.pin && found.pin !== pin) { alert("Incorrect Security PIN! Please enter correct PIN."); return; }
-            currentAccount = found; safeSetItem('gsi_current_user', currentAccount);
-            initApp(); if (navigator.onLine) { fetchAndMergeCloudData(email, false); }
+
+            if (found) {
+                if (found.pin && found.pin !== pin) { alert("Incorrect Security PIN!"); return; }
+                loginSuccess(found);
+            } else {
+                // If not found locally, check Google Drive (Cloud)
+                if (!navigator.onLine) {
+                    alert("अकाउंट इस मोबाइल में नहीं मिला! Cloud से डेटा वापस लाने के लिए इंटरनेट चालू करें।"); return;
+                }
+                
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Restoring Data...`;
+                btn.disabled = true;
+
+                fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        btn.innerHTML = `<i class="fas fa-sign-in-alt"></i> Secure Login`;
+                        btn.disabled = false;
+
+                        if (data && data.status === 'success' && data.payload && data.payload.account) {
+                            const cloudAccount = data.payload.account;
+                            if (cloudAccount.pin !== pin) { alert("Incorrect Security PIN!"); return; }
+                            
+                            // Remove any old reference and add clean from cloud
+                            allAccounts = allAccounts.filter(a => a.email !== email);
+                            allAccounts.push(cloudAccount);
+                            safeSetItem('gsi_accounts', allAccounts);
+                            loginSuccess(cloudAccount);
+                        } else {
+                            alert("Cloud पर भी यह अकाउंट नहीं मिला! कृपया 'New Register' पर जाकर नया अकाउंट बनाएं।");
+                        }
+                    })
+                    .catch(err => {
+                        btn.innerHTML = `<i class="fas fa-sign-in-alt"></i> Secure Login`;
+                        btn.disabled = false;
+                        alert("Server connection error! कृपया इंटरनेट कनेक्शन चेक करें।");
+                    });
+            }
+        }
+
+        function loginSuccess(accountObj) {
+            currentAccount = accountObj; safeSetItem('gsi_current_user', currentAccount);
+            initApp(); if (navigator.onLine) { fetchAndMergeCloudData(currentAccount.email, false); }
         }
 
         function openChangePinModal() { document.getElementById('pinModal').classList.add('active'); }
@@ -892,7 +945,7 @@
             e.preventDefault();
             const oldPin = document.getElementById('oldPinInput').value.trim(); const newPin = document.getElementById('newPinInput').value.trim();
             if (currentAccount.pin && currentAccount.pin !== oldPin) { alert("Current PIN is incorrect!"); return; }
-            if (newPin.length !== 4) { alert("New PIN must be exactly 4 digits!"); return; }
+            if (newPin.length !== 4) { alert("New PIN 4 अंकों का होना चाहिए!"); return; }
             currentAccount.pin = newPin;
             const idx = allAccounts.findIndex(a => a.email === currentAccount.email);
             if (idx !== -1) allAccounts[idx] = currentAccount;
@@ -905,7 +958,7 @@
             e.preventDefault();
             const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase(); const newPin = document.getElementById('forgotNewPinInput').value.trim();
             let found = allAccounts.find(a => a.email === email);
-            if (!found) { alert("Email not registered!"); return; } else { found.pin = newPin; }
+            if (!found) { alert("Email not registered locally! Cannot reset."); return; } else { found.pin = newPin; }
             safeSetItem('gsi_accounts', allAccounts); currentAccount = found; safeSetItem('gsi_current_user', currentAccount);
             closeModal('forgotPinModal'); alert("PIN Reset Successful! Logging you in..."); document.getElementById('forgotPinForm').reset(); initApp();
         }
@@ -915,14 +968,24 @@
         }
 
         function deleteEntireAccount() {
-            if(confirm("WARNING: This will permanently delete your account and all data from this device! Are you sure?")) {
-                if(confirm("FINAL WARNING: All your offline student records and fee history will be erased! Proceed?")) {
+            if(confirm("चेतावनी: क्या आप इस डिवाइस से अपना अकाउंट और सारा डेटा हमेशा के लिए डिलीट करना चाहते हैं?")) {
+                if(confirm("अंतिम चेतावनी: आपके सारे स्टूडेंट रिकॉर्ड और फीस हिस्ट्री मिट जाएगी! क्या आप सहमत हैं?")) {
                     if(currentAccount) {
+                        // Send wipe signal to cloud to clear remote data
+                        if(navigator.onLine && CLOUD_SYNC_URL) {
+                            try {
+                                fetch(CLOUD_SYNC_URL, {
+                                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ email: currentAccount.email, action: 'sync', payload: { account: { email: currentAccount.email, isDeleted: true }, students: [], payments: [], deleted: [] } })
+                                }).catch(() => {});
+                            } catch(e) {}
+                        }
+
                         localStorage.removeItem(`gsi_students_${currentAccount.email}`); localStorage.removeItem(`gsi_payments_${currentAccount.email}`); localStorage.removeItem(`gsi_deleted_${currentAccount.email}`);
                         allAccounts = allAccounts.filter(a => a.email !== currentAccount.email); safeSetItem('gsi_accounts', allAccounts);
                     }
                     localStorage.removeItem('gsi_current_user'); currentAccount = null; students = []; payments = [];
-                    alert("Account and Data successfully deleted."); initApp();
+                    alert("आपका अकाउंट और डेटा सफलतापूर्वक डिलीट कर दिया गया है।"); initApp();
                 }
             }
         }
@@ -1027,8 +1090,22 @@
             renderFees(); switchScreen('profileScreen');
         }
 
-        function makeCall() { if (activePhone) { const phoneNum = activePhone.replace(/\D/g, ''); window.location.href = "tel:" + phoneNum; } else { alert("Phone number not available!"); } }
-        function sendWhatsApp() { if (activePhone) { const cleanPhone = activePhone.replace(/\D/g, '').slice(-10); window.location.href = "https://wa.me/91" + cleanPhone; } else { alert("Phone number not available!"); } }
+        // ==========================================
+        // 4. FIX FOR WEBVIEW (GITHUB APK) CALL/WHATSAPP
+        // ==========================================
+        function makeCall() { 
+            if (activePhone) { 
+                const phoneNum = activePhone.replace(/\D/g, ''); 
+                window.open("tel:" + phoneNum, "_system"); 
+            } else { alert("Phone number not available!"); } 
+        }
+
+        function sendWhatsApp() { 
+            if (activePhone) { 
+                const cleanPhone = activePhone.replace(/\D/g, '').slice(-10); 
+                window.open("https://wa.me/91" + cleanPhone, "_system"); 
+            } else { alert("Phone number not available!"); } 
+        }
 
         function renderFees() {
             const box = document.getElementById('paymentsList'); box.innerHTML = '';
@@ -1071,7 +1148,6 @@
                         <div class="pay-actions">
                             <button onclick="openFeeModal(${p.id})" class="btn-sm edit"><i class="fas fa-pen"></i></button>
                             <button onclick="deleteFee(${p.id})" class="btn-sm delete"><i class="fas fa-trash"></i></button>
-                            <!-- SHARE BUTTON INSTEAD OF DIRECT DOWNLOAD -->
                             <button onclick="generateFastPDFReceipt(${p.id})" class="btn-sm share"><i class="fas fa-file-pdf"></i> View / Share PDF</button>
                         </div>
                     </div>`;
@@ -1085,9 +1161,6 @@
             else { document.getElementById('fDue').value = payable - paid; document.getElementById('fAdv').value = 0; }
         }
 
-        // ==========================================
-        // 2. RECEIPT FILE NAME FIX 
-        // ==========================================
         function generateFastPDFReceipt(paymentId) {
             const p = payments.find(x => x.id === paymentId); if (!p) return;
             const s = students.find(x => x.id === p.sid); if (!s) return;
@@ -1165,7 +1238,6 @@
             doc.setDrawColor(203, 213, 225); doc.line(65, footY - 1, 92, footY - 1);
             doc.setTextColor(71, 85, 105); doc.setFontSize(6.8); doc.setFont("helvetica", "bold"); doc.text("Authorized Signatory", 78.5, footY + 2.5, { align: "center" });
 
-            // File Name Set Properly: [Student Name]_[Month]_[Year]_Receipt.pdf
             const cleanStudentName = s.n.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
             const fileName = `${cleanStudentName}_${mName}_${y}_Receipt.pdf`;
 
