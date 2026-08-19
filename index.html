@@ -751,9 +751,6 @@
             } catch(e) { setSyncStatus(false, "Offline"); }
         }
 
-        // ==========================================
-        // 1. ADVANCED CSV EXPORT (Fixed Columns & Finance Details)
-        // ==========================================
         function exportToCSV() {
             if (!currentAccount) return;
             if (students.length === 0) {
@@ -832,9 +829,6 @@
             }
         }
 
-        // ==========================================
-        // 3. SECURE REGISTER & LOGIN (PREVENT OVERWRITE BUGS & FETCH CLOUD DATA)
-        // ==========================================
         function handleRegister(e) {
             e.preventDefault();
             const email = document.getElementById('regEmail').value.trim().toLowerCase();
@@ -894,10 +888,16 @@
             const pin = document.getElementById('loginPin').value.trim();
             const btn = document.getElementById('btnLoginSubmit');
             
-            let found = allAccounts.find(a => a.email === email);
+            // Get the LAST matched account to ensure no ghost duplicates are checked
+            let matchingAccounts = allAccounts.filter(a => a.email === email);
+            let found = matchingAccounts.length > 0 ? matchingAccounts[matchingAccounts.length - 1] : null;
 
             if (found) {
-                if (found.pin && found.pin !== pin) { alert("Incorrect Security PIN!"); return; }
+                if (String(found.pin) !== String(pin)) { 
+                    alert("Incorrect Security PIN!"); 
+                    document.getElementById('loginPin').value = ''; // Force user to re-type
+                    return; 
+                }
                 loginSuccess(found);
             } else {
                 if (!navigator.onLine) {
@@ -915,7 +915,11 @@
 
                         if (data && data.status === 'success' && data.payload && data.payload.account) {
                             const cloudAccount = data.payload.account;
-                            if (cloudAccount.pin !== pin) { alert("Incorrect Security PIN!"); return; }
+                            if (String(cloudAccount.pin) !== String(pin)) { 
+                                alert("Incorrect Security PIN!"); 
+                                document.getElementById('loginPin').value = '';
+                                return; 
+                            }
                             
                             allAccounts = allAccounts.filter(a => a.email !== email);
                             allAccounts.push(cloudAccount);
@@ -942,7 +946,7 @@
         function saveNewPin(e) {
             e.preventDefault();
             const oldPin = document.getElementById('oldPinInput').value.trim(); const newPin = document.getElementById('newPinInput').value.trim();
-            if (currentAccount.pin && currentAccount.pin !== oldPin) { alert("Current PIN is incorrect!"); return; }
+            if (String(currentAccount.pin) !== String(oldPin)) { alert("Current PIN is incorrect!"); return; }
             if (newPin.length !== 4) { alert("New PIN 4 अंकों का होना चाहिए!"); return; }
             currentAccount.pin = newPin;
             const idx = allAccounts.findIndex(a => a.email === currentAccount.email);
@@ -954,7 +958,7 @@
         function openForgotPinModal() { document.getElementById('forgotPinModal').classList.add('active'); }
         
         // ==========================================
-        // FORGOT PIN FIX: PUSH TO CLOUD DIRECTLY
+        // FORGOT PIN FIX: ROBUST CLOUD & LOCAL SYNC
         // ==========================================
         function resetPin(e) {
             e.preventDefault();
@@ -964,19 +968,25 @@
             
             if (newPin.length !== 4) { alert("नया PIN 4 अंकों का होना चाहिए!"); return; }
 
-            let foundIndex = allAccounts.findIndex(a => a.email === email);
+            let matchingAccounts = allAccounts.filter(a => a.email === email);
             
-            if (foundIndex !== -1) { 
-                allAccounts[foundIndex].pin = newPin;
+            if (matchingAccounts.length > 0) { 
+                let acc = matchingAccounts[matchingAccounts.length - 1]; // Use latest
+                acc.pin = newPin;
+
+                allAccounts = allAccounts.filter(a => a.email !== email);
+                allAccounts.push(acc);
                 safeSetItem('gsi_accounts', allAccounts); 
-                currentAccount = allAccounts[foundIndex]; 
+                
+                currentAccount = acc; 
                 safeSetItem('gsi_current_user', currentAccount);
                 
-                syncToCloud(); // <-- MAIN FIX: Update Cloud with new PIN instantly
+                syncToCloud(); // Immediately push new PIN to cloud
                 
                 closeModal('forgotPinModal'); 
                 alert("PIN Reset Successful! Logging you in..."); 
                 document.getElementById('forgotPinForm').reset(); 
+                document.getElementById('loginPin').value = ''; // clear login box
                 initApp();
             } else {
                 if (!navigator.onLine) {
@@ -1004,11 +1014,12 @@
                             currentAccount = cloudAccount;
                             safeSetItem('gsi_current_user', currentAccount);
                             
-                            syncToCloud(); // <-- MAIN FIX: Save to cloud
+                            syncToCloud(); // Sync back immediately
                             
                             closeModal('forgotPinModal'); 
                             alert("PIN Reset Successful! Logging you in..."); 
                             document.getElementById('forgotPinForm').reset(); 
+                            document.getElementById('loginPin').value = '';
                             initApp();
                         } else {
                             alert("Cloud पर भी यह अकाउंट नहीं मिला! कृपया सही ईमेल दर्ज करें।");
