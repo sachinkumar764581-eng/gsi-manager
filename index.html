@@ -409,7 +409,7 @@
                     <label>Set New PIN *</label>
                     <input type="password" inputmode="numeric" id="forgotNewPinInput" class="form-control" placeholder="Enter new 4-digit PIN" required minlength="4" maxlength="4" pattern="\d{4}">
                 </div>
-                <button type="submit" class="btn-submit">Reset & Login Securely</button>
+                <button type="submit" class="btn-submit" id="btnForgotSubmit">Reset & Login Securely</button>
             </form>
         </div>
     </div>
@@ -900,7 +900,6 @@
                 if (found.pin && found.pin !== pin) { alert("Incorrect Security PIN!"); return; }
                 loginSuccess(found);
             } else {
-                // If not found locally, check Google Drive (Cloud)
                 if (!navigator.onLine) {
                     alert("अकाउंट इस मोबाइल में नहीं मिला! Cloud से डेटा वापस लाने के लिए इंटरनेट चालू करें।"); return;
                 }
@@ -918,7 +917,6 @@
                             const cloudAccount = data.payload.account;
                             if (cloudAccount.pin !== pin) { alert("Incorrect Security PIN!"); return; }
                             
-                            // Remove any old reference and add clean from cloud
                             allAccounts = allAccounts.filter(a => a.email !== email);
                             allAccounts.push(cloudAccount);
                             safeSetItem('gsi_accounts', allAccounts);
@@ -954,13 +952,74 @@
         }
 
         function openForgotPinModal() { document.getElementById('forgotPinModal').classList.add('active'); }
+        
+        // ==========================================
+        // FORGOT PIN FIX: PUSH TO CLOUD DIRECTLY
+        // ==========================================
         function resetPin(e) {
             e.preventDefault();
-            const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase(); const newPin = document.getElementById('forgotNewPinInput').value.trim();
-            let found = allAccounts.find(a => a.email === email);
-            if (!found) { alert("Email not registered locally! Cannot reset."); return; } else { found.pin = newPin; }
-            safeSetItem('gsi_accounts', allAccounts); currentAccount = found; safeSetItem('gsi_current_user', currentAccount);
-            closeModal('forgotPinModal'); alert("PIN Reset Successful! Logging you in..."); document.getElementById('forgotPinForm').reset(); initApp();
+            const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase(); 
+            const newPin = document.getElementById('forgotNewPinInput').value.trim();
+            const btn = document.getElementById('btnForgotSubmit');
+            
+            if (newPin.length !== 4) { alert("नया PIN 4 अंकों का होना चाहिए!"); return; }
+
+            let foundIndex = allAccounts.findIndex(a => a.email === email);
+            
+            if (foundIndex !== -1) { 
+                allAccounts[foundIndex].pin = newPin;
+                safeSetItem('gsi_accounts', allAccounts); 
+                currentAccount = allAccounts[foundIndex]; 
+                safeSetItem('gsi_current_user', currentAccount);
+                
+                syncToCloud(); // <-- MAIN FIX: Update Cloud with new PIN instantly
+                
+                closeModal('forgotPinModal'); 
+                alert("PIN Reset Successful! Logging you in..."); 
+                document.getElementById('forgotPinForm').reset(); 
+                initApp();
+            } else {
+                if (!navigator.onLine) {
+                    alert("अकाउंट इस मोबाइल में नहीं मिला! Cloud से ढूँढने के लिए इंटरनेट चालू करें।"); return;
+                }
+                
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Resetting...`;
+                btn.disabled = true;
+
+                fetch(`${CLOUD_SYNC_URL}?email=${encodeURIComponent(email)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+
+                        if (data && data.status === 'success' && data.payload && data.payload.account) {
+                            let cloudAccount = data.payload.account;
+                            cloudAccount.pin = newPin; // Set New PIN
+                            
+                            allAccounts = allAccounts.filter(a => a.email !== email);
+                            allAccounts.push(cloudAccount);
+                            safeSetItem('gsi_accounts', allAccounts);
+                            
+                            currentAccount = cloudAccount;
+                            safeSetItem('gsi_current_user', currentAccount);
+                            
+                            syncToCloud(); // <-- MAIN FIX: Save to cloud
+                            
+                            closeModal('forgotPinModal'); 
+                            alert("PIN Reset Successful! Logging you in..."); 
+                            document.getElementById('forgotPinForm').reset(); 
+                            initApp();
+                        } else {
+                            alert("Cloud पर भी यह अकाउंट नहीं मिला! कृपया सही ईमेल दर्ज करें।");
+                        }
+                    })
+                    .catch(err => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        alert("Server connection error! कृपया इंटरनेट कनेक्शन चेक करें।");
+                    });
+            }
         }
 
         function handleLogout() {
@@ -971,7 +1030,6 @@
             if(confirm("चेतावनी: क्या आप इस डिवाइस से अपना अकाउंट और सारा डेटा हमेशा के लिए डिलीट करना चाहते हैं?")) {
                 if(confirm("अंतिम चेतावनी: आपके सारे स्टूडेंट रिकॉर्ड और फीस हिस्ट्री मिट जाएगी! क्या आप सहमत हैं?")) {
                     if(currentAccount) {
-                        // Send wipe signal to cloud to clear remote data
                         if(navigator.onLine && CLOUD_SYNC_URL) {
                             try {
                                 fetch(CLOUD_SYNC_URL, {
@@ -1090,9 +1148,6 @@
             renderFees(); switchScreen('profileScreen');
         }
 
-        // ==========================================
-        // 4. FIX FOR WEBVIEW (GITHUB APK) CALL/WHATSAPP
-        // ==========================================
         function makeCall() { 
             if (activePhone) { 
                 const phoneNum = activePhone.replace(/\D/g, ''); 
