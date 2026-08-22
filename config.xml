@@ -1,12 +1,49 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.gsi.manager" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    
     <name>Fee Manager Pro</name>
-    <description>Fee Manager Pro</description>
+    <description>Professional Offline-First Fee & Student Management System</description>
+    <author email="official.globalstudyinstitute@gmail.com" href="https://github.com/sachinkumar">
+        Global Study Institute Developer Team
+    </author>
+    
+    <!-- नेटवर्क और एक्सटर्नल लिंक्स एक्सेस परमिशन -->
     <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="whatsapp:*" />
+    <allow-intent href="mailto:*" />
+
+    <!-- स्प्लैश स्क्रीन और UI प्रेफरेंसेज -->
     <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/icon.png" />
-    <preference name="AndroidWindowSplashScreenBackground" value="#FFFFFF" />
+    <preference name="AndroidWindowSplashScreenBackground" value="#1E3A8A" />
+    <preference name="SplashScreen" value="screen" />
+    <preference name="SplashScreenDelay" value="2000" />
+    <preference name="Orientation" value="portrait" />
+    <preference name="Fullscreen" value="false" />
+    <preference name="BackupWebStorage" value="none" />
+    <preference name="KeepRunning" value="true" />
+    
+    <!-- एंड्रॉइड प्लेटफार्म और फाइल डाउनलोड/स्टोरेज परमीशन्स -->
     <platform name="android">
         <icon src="www/icon.png" />
         <splash src="www/icon.png" />
+
+        <!-- एंड्रॉइड WebView के लिए क्रिटिकल परमीशन्स (पीडीएफ और एक्सेल डाउनलोड के लिए) -->
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+            <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+        </edit-config>
+
+        <!-- WebView सेटिंग्स ताकि फाइलें और जावास्क्रिप्ट बिना रुकावट चल सकें -->
+        <preference name="AllowFileAccess" value="true" />
+        <preference name="LoadUrlTimeoutValue" value="60000" />
+        <preference name="InAppBrowserStorageEnabled" value="true" />
+        <preference name="DisableDeployDelete" value="true" />
     </platform>
+
 </widget>
