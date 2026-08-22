@@ -751,6 +751,9 @@
             } catch(e) { setSyncStatus(false, "Offline"); }
         }
 
+        // ==========================================
+        // FIXED EXCEL EXPORT (WEBVIEW SAFE SHARE/DOWNLOAD)
+        // ==========================================
         function exportToCSV() {
             if (!currentAccount) return;
             if (students.length === 0) {
@@ -780,13 +783,17 @@
 
             const fileName = `${currentAccount.instName.replace(/\s+/g, '_')}_Students_Report.csv`;
             const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
-            const file = new File([blob], fileName, { type: 'text/csv' });
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({ title: 'Student Financial Report', files: [file] })
-                .then(() => { showInlineMsg('exportInlineMsg', 'Share Menu Opened Successfully!'); })
-                .catch(() => { fallbackDownload(blob, fileName, 'exportInlineMsg'); });
-            } else { fallbackDownload(blob, fileName, 'exportInlineMsg'); }
+            if (navigator.share) {
+                const file = new File([blob], fileName, { type: 'text/csv' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({ title: 'Student Financial Report', files: [file] })
+                    .then(() => { showInlineMsg('exportInlineMsg', 'Share Menu Opened!'); })
+                    .catch(() => { fallbackDownload(blob, fileName, 'exportInlineMsg'); });
+                    return;
+                }
+            }
+            fallbackDownload(blob, fileName, 'exportInlineMsg');
         }
 
         function fallbackDownload(blob, fileName, msgId) {
@@ -888,14 +895,13 @@
             const pin = document.getElementById('loginPin').value.trim();
             const btn = document.getElementById('btnLoginSubmit');
             
-            // Get the LAST matched account to ensure no ghost duplicates are checked
             let matchingAccounts = allAccounts.filter(a => a.email === email);
             let found = matchingAccounts.length > 0 ? matchingAccounts[matchingAccounts.length - 1] : null;
 
             if (found) {
                 if (String(found.pin) !== String(pin)) { 
                     alert("Incorrect Security PIN!"); 
-                    document.getElementById('loginPin').value = ''; // Force user to re-type
+                    document.getElementById('loginPin').value = ''; 
                     return; 
                 }
                 loginSuccess(found);
@@ -957,9 +963,6 @@
 
         function openForgotPinModal() { document.getElementById('forgotPinModal').classList.add('active'); }
         
-        // ==========================================
-        // FORGOT PIN FIX: ROBUST CLOUD & LOCAL SYNC
-        // ==========================================
         function resetPin(e) {
             e.preventDefault();
             const email = document.getElementById('forgotEmailInput').value.trim().toLowerCase(); 
@@ -971,7 +974,7 @@
             let matchingAccounts = allAccounts.filter(a => a.email === email);
             
             if (matchingAccounts.length > 0) { 
-                let acc = matchingAccounts[matchingAccounts.length - 1]; // Use latest
+                let acc = matchingAccounts[matchingAccounts.length - 1]; 
                 acc.pin = newPin;
 
                 allAccounts = allAccounts.filter(a => a.email !== email);
@@ -980,13 +983,12 @@
                 
                 currentAccount = acc; 
                 safeSetItem('gsi_current_user', currentAccount);
-                
-                syncToCloud(); // Immediately push new PIN to cloud
+                syncToCloud(); 
                 
                 closeModal('forgotPinModal'); 
                 alert("PIN Reset Successful! Logging you in..."); 
                 document.getElementById('forgotPinForm').reset(); 
-                document.getElementById('loginPin').value = ''; // clear login box
+                document.getElementById('loginPin').value = ''; 
                 initApp();
             } else {
                 if (!navigator.onLine) {
@@ -1005,7 +1007,7 @@
 
                         if (data && data.status === 'success' && data.payload && data.payload.account) {
                             let cloudAccount = data.payload.account;
-                            cloudAccount.pin = newPin; // Set New PIN
+                            cloudAccount.pin = newPin; 
                             
                             allAccounts = allAccounts.filter(a => a.email !== email);
                             allAccounts.push(cloudAccount);
@@ -1013,8 +1015,7 @@
                             
                             currentAccount = cloudAccount;
                             safeSetItem('gsi_current_user', currentAccount);
-                            
-                            syncToCloud(); // Sync back immediately
+                            syncToCloud(); 
                             
                             closeModal('forgotPinModal'); 
                             alert("PIN Reset Successful! Logging you in..."); 
@@ -1085,15 +1086,39 @@
 
         function openHelpSupport() { alert("Fee Manager Pro Support\n\nOfficial Developer Email:\nofficial.globalstudyinstitute@gmail.com\n\nWe are here to help you!"); }
 
+        // ==========================================
+        // FIXED SMART BACK BUTTON (PREVENTS ACCIDENTAL EXIT)
+        // ==========================================
         function handleBackNavigation() {
             let activeModal = document.querySelector('.modal-overlay.active');
-            if (activeModal) { activeModal.classList.remove('active'); return; }
-            if (document.getElementById('privacyScreen').classList.contains('active')) { switchScreen('settingsScreen'); return; }
-            if (document.getElementById('profileScreen').classList.contains('active') || document.getElementById('settingsScreen').classList.contains('active')) { switchScreen('homeScreen'); return; }
-            if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं?")) { if (navigator.app && navigator.app.exitApp) { navigator.app.exitApp(); } else { window.close(); } }
+            if (activeModal) { 
+                activeModal.classList.remove('active'); 
+                return; 
+            }
+            if (document.getElementById('privacyScreen').classList.contains('active')) {
+                switchScreen('settingsScreen'); 
+                return;
+            }
+            if (document.getElementById('profileScreen').classList.contains('active') || 
+                document.getElementById('settingsScreen').classList.contains('active')) {
+                switchScreen('homeScreen'); 
+                return;
+            }
+            if (document.getElementById('homeScreen').classList.contains('active')) {
+                if (confirm("क्या आप ऐप से बाहर निकलना चाहते हैं?")) {
+                    if (navigator.app && navigator.app.exitApp) { 
+                        navigator.app.exitApp(); 
+                    } else { 
+                        window.close();
+                    }
+                }
+            }
         }
 
-        document.addEventListener("backbutton", function(e) { e.preventDefault(); handleBackNavigation(); }, false);
+        document.addEventListener("backbutton", function(e) { 
+            e.preventDefault(); 
+            handleBackNavigation(); 
+        }, false);
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1227,6 +1252,9 @@
             else { document.getElementById('fDue').value = payable - paid; document.getElementById('fAdv').value = 0; }
         }
 
+        // ==========================================
+        // FIXED PDF RECEIPT (WEBVIEW SAFE SHARE/DOWNLOAD)
+        // ==========================================
         function generateFastPDFReceipt(paymentId) {
             const p = payments.find(x => x.id === paymentId); if (!p) return;
             const s = students.find(x => x.id === p.sid); if (!s) return;
@@ -1308,12 +1336,16 @@
             const fileName = `${cleanStudentName}_${mName}_${y}_Receipt.pdf`;
 
             const pdfBlob = doc.output('blob');
-            const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+            const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({ title: 'Student Fee Receipt', files: [file] })
-                .catch(() => fallbackDownload(pdfBlob, fileName));
-            } else { fallbackDownload(pdfBlob, fileName); }
+            if (navigator.share) {
+                if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    navigator.share({ title: 'Fee Receipt', files: [pdfFile] })
+                    .catch(() => fallbackDownload(pdfBlob, fileName));
+                    return;
+                }
+            }
+            fallbackDownload(pdfBlob, fileName);
         }
 
         function generateAutoStudentID() {
