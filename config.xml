@@ -25,19 +25,10 @@
     <preference name="BackupWebStorage" value="none" />
     <preference name="KeepRunning" value="true" />
     
-    <!-- एंड्रॉइड प्लेटफार्म और फाइल डाउनलोड/स्टोरेज परमीशन्स -->
+    <!-- एंड्रॉइड प्लेटफार्म प्रेफरेंसेज -->
     <platform name="android">
         <icon src="www/icon.png" />
         <splash src="www/icon.png" />
-
-        <!-- एंड्रॉइड WebView के लिए क्रिटिकल परमीशन्स (पीडीएफ और एक्सेल डाउनलोड के लिए) -->
-        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
-            <uses-permission android:name="android.permission.INTERNET" />
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-            <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
-        </edit-config>
 
         <!-- WebView सेटिंग्स ताकि फाइलें और जावास्क्रिप्ट बिना रुकावट चल सकें -->
         <preference name="AllowFileAccess" value="true" />
