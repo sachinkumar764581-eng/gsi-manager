@@ -6,6 +6,9 @@
     <meta name="theme-color" content="#1E3A8A">
     <meta name="apple-mobile-web-app-capable" content="yes">
     
+    <!-- PWABuilder Manifest Link Added -->
+    <link rel="manifest" href="manifest.json">
+    
     <title>Fee Manager Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -751,9 +754,6 @@
             } catch(e) { setSyncStatus(false, "Offline"); }
         }
 
-        // ==========================================
-        // FIXED EXCEL EXPORT (WEBVIEW SAFE SHARE/DOWNLOAD)
-        // ==========================================
         function exportToCSV() {
             if (!currentAccount) return;
             if (students.length === 0) {
@@ -1086,9 +1086,6 @@
 
         function openHelpSupport() { alert("Fee Manager Pro Support\n\nOfficial Developer Email:\nofficial.globalstudyinstitute@gmail.com\n\nWe are here to help you!"); }
 
-        // ==========================================
-        // FIXED SMART BACK BUTTON (PREVENTS ACCIDENTAL EXIT)
-        // ==========================================
         function handleBackNavigation() {
             let activeModal = document.querySelector('.modal-overlay.active');
             if (activeModal) { 
@@ -1252,9 +1249,6 @@
             else { document.getElementById('fDue').value = payable - paid; document.getElementById('fAdv').value = 0; }
         }
 
-        // ==========================================
-        // FIXED PDF RECEIPT (WEBVIEW SAFE SHARE/DOWNLOAD)
-        // ==========================================
         function generateFastPDFReceipt(paymentId) {
             const p = payments.find(x => x.id === paymentId); if (!p) return;
             const s = students.find(x => x.id === p.sid); if (!s) return;
