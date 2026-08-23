@@ -1,0 +1,17 @@
+{
+  "background_color": "#f8fafc",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Fee Manager Pro",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Fee Manager",
+  "start_url": "/",
+  "theme_color": "hsl(224, 76%, 48%)",
+  "id": "com.gsi.manager",
+  "categories": [
+    "business",
+    "education",
+    "productivity"
+  ]
+}
